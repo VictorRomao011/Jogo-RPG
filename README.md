@@ -1,0 +1,71 @@
+# Ecos de Vaethir
+
+RPG de mundo aberto sistêmico para **PC (Windows)** e **Android** — nascido
+multiplataforma, não portado. O mundo vive com ou sem o jogador: NPCs têm
+rotina, memória e fofoca; a economia tem oferta, demanda e inflação; facções
+guerreiam por pressões simuladas; eventos emergem da simulação, nunca de script.
+
+**Leia primeiro:** [`docs/GDD.md`](docs/GDD.md) — o Game Design Document
+completo (lore, regiões, facções, sistemas, pipeline e roadmap).
+
+## Estado atual — Fase 0 (Fundação)
+
+- ✅ Núcleo de simulação headless: relógio/estações, clima sistêmico,
+  economia de 3 camadas com caravanas reais, guerra de facções emergente,
+  NPCs com necessidades/memórias/fofoca, motor de eventos ("Dramaturgo").
+- ✅ Camada de entrada adaptativa: teclado+mouse, gamepad e touch (stick
+  virtual dinâmico + botões contextuais) alimentando as mesmas ações semânticas.
+- ✅ HUD responsiva "quase invisível" com breakpoints (phone → ultrawide) e safe-area.
+- ✅ Protótipo cinza jogável com progressão por uso, sobrevivência leve e
+  NPCs encenados a partir da simulação.
+- ✅ Testes headless: unidade + soak (300 dias de mundo sem jogador).
+
+## Requisitos
+
+- [Godot 4.4+](https://godotengine.org/download) (edição padrão, GDScript)
+- Para Android: export templates + Android SDK configurados no Godot
+  ([docs](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html))
+
+## Rodar o protótipo
+
+```bash
+godot --path .          # abre no editor: F5 para jogar
+```
+
+- **PC:** WASD + mouse | Shift corre | C agacha | Espaço pula | E interage | Q aparo
+- **Gamepad:** stick esquerdo move | A/✕ pula | X/□ interage | LB/L1 aparo
+- **Touch:** stick virtual (metade esquerda) | arrastar (metade direita) olha |
+  botões contextuais aparecem quando fazem sentido
+
+## Testes
+
+```bash
+godot --headless --path . --script tests/unit_tests.gd
+godot --headless --path . --script tests/soak_test.gd -- 300   # 300 dias sem jogador
+```
+
+## Exportar
+
+```bash
+godot --headless --path . --export-release "Windows" build/windows/EcosDeVaethir.exe
+godot --headless --path . --export-debug "Android" build/android/EcosDeVaethir.apk
+```
+
+## Estrutura
+
+| Pasta | Conteúdo |
+|-------|----------|
+| `source/core/` | Núcleo de simulação (sem cena; roda headless em CI) |
+| `source/game/` | Encenação: jogador, combate, NPCs encenados, streaming |
+| `source/ui/` | HUD responsiva + controles touch |
+| `source/autoload/` | Singletons: `Sim`, `Actions`, `UIScale` |
+| `data/` | Conteúdo declarativo (JSON moddável): facções, regiões, bens, NPCs, eventos, receitas |
+| `docs/` | GDD + checklist de paridade de entrada |
+| `tests/` | Testes headless de unidade e soak |
+
+## Regra de ouro do repositório
+
+Toda mecânica nova passa pelo checklist
+[`docs/checklists/input_parity.md`](docs/checklists/input_parity.md)
+(teclado+mouse / gamepad / touch) antes do merge. Se não funcionar de forma
+intuitiva em alguma das três entradas, ela é redesenhada — não adaptada.
