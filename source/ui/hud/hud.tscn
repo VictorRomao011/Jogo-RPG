@@ -111,6 +111,24 @@ mouse_filter = 2
 horizontal_alignment = 1
 autowrap_mode = 2
 
+[node name="HintLabel" type="Label" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -420.0
+offset_top = -96.0
+offset_right = 420.0
+offset_bottom = -72.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "WASD mover · Shift correr · E interagir · botão esq./dir. atacar · Q aparar · C agachar · J caderno · P pausa"
+
 [node name="JournalButton" type="Button" parent="Root"]
 unique_name_in_owner = true
 layout_mode = 1
@@ -120,6 +138,16 @@ offset_top = 12.0
 offset_right = 120.0
 offset_bottom = 52.0
 text = "Caderno"
+
+[node name="PauseButton" type="Button" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 128.0
+offset_top = 12.0
+offset_right = 176.0
+offset_bottom = 52.0
+text = "≡"
 
 [node name="ClockLabel" type="Label" parent="Root"]
 unique_name_in_owner = true

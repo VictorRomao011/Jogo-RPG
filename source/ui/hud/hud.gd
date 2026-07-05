@@ -10,6 +10,7 @@ const DIALOG_SECONDS := 6.0
 var _player: Player
 var _fade_timer := 0.0
 var _dialog_timer := 0.0
+var _hint_timer := 25.0
 
 @onready var stamina_bar: ProgressBar = %StaminaBar
 @onready var health_bar: ProgressBar = %HealthBar
@@ -20,6 +21,8 @@ var _dialog_timer := 0.0
 @onready var dialog_panel: PanelContainer = %DialogPanel
 @onready var dialog_label: Label = %DialogLabel
 @onready var journal_button: Button = %JournalButton
+@onready var hint_label: Label = %HintLabel
+@onready var pause_button: Button = %PauseButton
 
 
 func _ready() -> void:
@@ -38,6 +41,15 @@ func _ready() -> void:
 	interact_button.pressed.connect(func() -> void: Actions.touch_tap("interact"))
 	journal_button.visible = Actions.is_touch()
 	journal_button.pressed.connect(func() -> void: Actions.touch_tap("open_journal"))
+	# Dica de controles que se dissolve sozinha — aprender em minutos,
+	# sem tutorial (GDD: experiência do usuário).
+	hint_label.visible = not Actions.is_touch()
+	pause_button.visible = Actions.is_touch()
+	pause_button.pressed.connect(func() -> void:
+		var pause_menu := get_tree().get_first_node_in_group("pause_menu")
+		if pause_menu != null:
+			pause_menu.open()
+	)
 	_wire_action_cluster()
 
 
@@ -71,7 +83,11 @@ func _process(delta: float) -> void:
 		if _fade_timer <= 0.0:
 			create_tween().tween_property(stamina_bar, "modulate:a", 0.0, 0.6)
 	rumor_label.modulate.a = maxf(0.0, rumor_label.modulate.a - delta * 0.1)
-	clock_label.text = Sim.world.clock.timestamp()
+	clock_label.text = str(Sim.world.clock.timestamp())
+	if _hint_timer > 0.0:
+		_hint_timer -= delta
+		if _hint_timer <= 0.0:
+			create_tween().tween_property(hint_label, "modulate:a", 0.0, 1.5)
 	_update_interact_button()
 	_update_health()
 	if _dialog_timer > 0.0:
@@ -139,6 +155,8 @@ func _nearest_interactable() -> Interactable:
 func _on_device_changed(_device: int) -> void:
 	action_cluster.visible = Actions.is_touch()
 	journal_button.visible = Actions.is_touch()
+	pause_button.visible = Actions.is_touch()
+	hint_label.visible = not Actions.is_touch() and _hint_timer > 0.0
 
 
 ## Reposiciona densidade por breakpoint; respeita safe-area (notch).

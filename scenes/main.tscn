@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://c1mainecos00001"]
+[gd_scene load_steps=32 format=3 uid="uid://c1mainecos00001"]
 
 [ext_resource type="Script" path="res://source/game/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://source/game/player/player.tscn" id="2_player"]
@@ -11,6 +11,8 @@
 [ext_resource type="Script" path="res://source/game/world/lootable.gd" id="9_loot"]
 [ext_resource type="Script" path="res://source/game/world/poi.gd" id="10_poi"]
 [ext_resource type="PackedScene" path="res://source/ui/screens/journal_screen.tscn" id="11_journal"]
+[ext_resource type="Script" path="res://source/game/world/day_night.gd" id="12_daynight"]
+[ext_resource type="Script" path="res://source/game/world/world_dresser.gd" id="13_dresser"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_main"]
 sky_top_color = Color(0.35, 0.46, 0.6, 1)
@@ -28,8 +30,42 @@ tonemap_mode = 2
 [sub_resource type="BoxShape3D" id="BoxShape_ground"]
 size = Vector3(200, 1, 200)
 
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.36, 0.43, 0.31, 1)
+roughness = 1.0
+
 [sub_resource type="BoxMesh" id="BoxMesh_ground"]
+material = SubResource("Material_ground")
 size = Vector3(200, 1, 200)
+
+[sub_resource type="StandardMaterial3D" id="Material_house"]
+albedo_color = Color(0.58, 0.52, 0.44, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Material_wood"]
+albedo_color = Color(0.35, 0.27, 0.19, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Material_stone"]
+albedo_color = Color(0.48, 0.48, 0.52, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Material_ember"]
+albedo_color = Color(1, 0.45, 0.1, 1)
+emission_enabled = true
+emission = Color(1, 0.5, 0.15, 1)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_logs"]
+material = SubResource("Material_wood")
+top_radius = 0.55
+bottom_radius = 0.65
+height = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_ember"]
+material = SubResource("Material_ember")
+radius = 0.3
+height = 0.5
 
 [sub_resource type="SphereShape3D" id="SphereShape_fire"]
 radius = 1.5
@@ -38,6 +74,7 @@ radius = 1.5
 size = Vector3(6, 4, 6)
 
 [sub_resource type="BoxMesh" id="BoxMesh_house"]
+material = SubResource("Material_house")
 size = Vector3(6, 4, 6)
 
 [sub_resource type="SphereShape3D" id="SphereShape_poi"]
@@ -132,6 +169,26 @@ prompt = "Descansar"
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Fogueira"]
 shape = SubResource("SphereShape_fire")
 
+[node name="Logs" type="MeshInstance3D" parent="Fogueira"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = SubResource("CylinderMesh_logs")
+
+[node name="Ember" type="MeshInstance3D" parent="Fogueira"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+mesh = SubResource("SphereMesh_ember")
+
+[node name="FireLight" type="OmniLight3D" parent="Fogueira"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+light_color = Color(1, 0.6, 0.3, 1)
+light_energy = 2.2
+omni_range = 10.0
+
+[node name="DayNight" type="Node" parent="."]
+script = ExtResource("12_daynight")
+
+[node name="Vegetacao" type="Node3D" parent="."]
+script = ExtResource("13_dresser")
+
 [node name="Bancada" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -11)
 script = ExtResource("5_interact")
@@ -151,6 +208,7 @@ owner_npc_id = "mira_ferreira"
 shape = SubResource("BoxShape_chest")
 
 [node name="Mesh" type="MeshInstance3D" parent="BauDaMira"]
+material_override = SubResource("Material_wood")
 mesh = SubResource("BoxMesh_chest")
 
 [node name="PortoAfundado" type="Area3D" parent="."]
@@ -171,6 +229,7 @@ transform = Transform3D(0.15, 0.08, 0, -0.08, 0.9, 0, 0, 0, 0.15, -3, 2, 2)
 shape = SubResource("BoxShape_house")
 
 [node name="Mesh" type="MeshInstance3D" parent="PortoAfundado/Mastro1"]
+material_override = SubResource("Material_wood")
 mesh = SubResource("BoxMesh_house")
 
 [node name="Mastro2" type="StaticBody3D" parent="PortoAfundado"]
@@ -180,6 +239,7 @@ transform = Transform3D(0.15, 0.1, 0, -0.1, 0.8, 0, 0, 0, 0.15, 4, 1.6, -3)
 shape = SubResource("BoxShape_house")
 
 [node name="Mesh" type="MeshInstance3D" parent="PortoAfundado/Mastro2"]
+material_override = SubResource("Material_wood")
 mesh = SubResource("BoxMesh_house")
 
 [node name="CarvalhoPartido" type="Area3D" parent="."]
@@ -198,6 +258,7 @@ transform = Transform3D(0.4, 0, 0, 0, 1.6, 0, 0, 0, 0.4, 0, 3.2, 0)
 shape = SubResource("BoxShape_house")
 
 [node name="Mesh" type="MeshInstance3D" parent="CarvalhoPartido/Tronco"]
+material_override = SubResource("Material_wood")
 mesh = SubResource("BoxMesh_house")
 
 [node name="VigiaCega" type="Area3D" parent="."]
@@ -216,6 +277,7 @@ transform = Transform3D(0.6, 0, 0, 0, 3, 0, 0, 0, 0.6, 0, 6, 0)
 shape = SubResource("BoxShape_house")
 
 [node name="Mesh" type="MeshInstance3D" parent="VigiaCega/Torre"]
+material_override = SubResource("Material_stone")
 mesh = SubResource("BoxMesh_house")
 
 [node name="HUD" parent="." instance=ExtResource("3_hud")]

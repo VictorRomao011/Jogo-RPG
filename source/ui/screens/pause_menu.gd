@@ -15,6 +15,7 @@ extends CanvasLayer
 
 
 func _ready() -> void:
+	add_to_group("pause_menu")
 	visible = false
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	resume_button.pressed.connect(close)
