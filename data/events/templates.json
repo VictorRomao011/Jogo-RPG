@@ -1,0 +1,84 @@
+{
+  "templates": [
+    {
+      "id": "emboscada_na_estrada",
+      "category": "conflict",
+      "weight": 1.0,
+      "cooldown_days": 3,
+      "triggers": {"war_intensity": 0.4, "lost_caravans": 0.3},
+      "description": "saqueadores armaram emboscada perto de {place}"
+    },
+    {
+      "id": "greve_de_mineiros",
+      "category": "economic",
+      "weight": 0.6,
+      "cooldown_days": 20,
+      "triggers": {"food_deficit_total": 0.8},
+      "description": "mineiros cruzaram os braços em {place} — dizem que o pão triplicou"
+    },
+    {
+      "id": "caravana_fantasma",
+      "category": "economic",
+      "weight": 0.8,
+      "cooldown_days": 10,
+      "triggers": {"lost_caravans": 0.8},
+      "description": "acharam uma caravana queimada na rota de {place}; ninguém sobrou para contar"
+    },
+    {
+      "id": "tempestade_fecha_passo",
+      "category": "natural",
+      "weight": 1.0,
+      "cooldown_days": 8,
+      "triggers": {"bad_weather": 1.2},
+      "description": "o tempo fechou o passo de {place}; mercadores acampam e esperam"
+    },
+    {
+      "id": "migracao_de_manada",
+      "category": "natural",
+      "weight": 0.7,
+      "cooldown_days": 25,
+      "triggers": {"bad_weather": 0.4},
+      "description": "uma manada cruzou {place} — e os predadores foram atrás"
+    },
+    {
+      "id": "febre_no_porto",
+      "category": "social",
+      "weight": 0.5,
+      "cooldown_days": 40,
+      "triggers": {"food_deficit_total": 0.6},
+      "description": "há febre em {place}; o curandeiro pede sanguessugas e ervas"
+    },
+    {
+      "id": "festa_da_colheita",
+      "category": "social",
+      "weight": 0.8,
+      "cooldown_days": 30,
+      "triggers": {},
+      "description": "haverá festa em {place} — cerveja barata e línguas soltas"
+    },
+    {
+      "id": "refugiados_na_estrada",
+      "category": "social",
+      "weight": 0.9,
+      "cooldown_days": 12,
+      "triggers": {"war_intensity": 0.8, "food_deficit_total": 0.5},
+      "description": "famílias deixaram {place} com o que cabia nas costas"
+    },
+    {
+      "id": "ruina_acordou",
+      "category": "echo",
+      "weight": 0.4,
+      "cooldown_days": 35,
+      "triggers": {"bad_weather": 0.3},
+      "description": "dizem que uma ruína perto de {place} passou a zumbir à noite"
+    },
+    {
+      "id": "experimento_vazou",
+      "category": "echo",
+      "weight": 0.3,
+      "cooldown_days": 50,
+      "triggers": {"war_intensity": 0.2},
+      "description": "algo escapou de um porão da Guilda perto de {place}; os cães não param de uivar"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "recipes": [
+    {
+      "id": "faca_simples",
+      "output": "faca",
+      "domain": "forja",
+      "skill": "smithing",
+      "inputs": {"iron": 1, "leather": 1}
+    },
+    {
+      "id": "cataplasma_de_sanguessuga",
+      "output": "cataplasma_de_sanguessuga",
+      "domain": "alquimia",
+      "skill": "alchemy",
+      "inputs": {"leeches": 2, "herbs": 1}
+    },
+    {
+      "id": "cha_de_raiz_morna",
+      "output": "cha_de_raiz_morna",
+      "domain": "culinaria",
+      "skill": "survival",
+      "inputs": {"herbs": 2}
+    },
+    {
+      "id": "unguento_limpo",
+      "output": "unguento_limpo",
+      "domain": "alquimia",
+      "skill": "medicine",
+      "inputs": {"herbs": 2, "salt": 1}
+    },
+    {
+      "id": "capa_de_la",
+      "output": "capa_de_la",
+      "domain": "tecelagem",
+      "skill": "survival",
+      "inputs": {"cloth": 3}
+    },
+    {
+      "id": "ensopado_do_cais",
+      "output": "ensopado_do_cais",
+      "domain": "culinaria",
+      "skill": "survival",
+      "inputs": {"fish": 2, "grain": 1, "salt": 1}
+    }
+  ]
+}

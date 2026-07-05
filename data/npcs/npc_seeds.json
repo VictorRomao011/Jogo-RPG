@@ -1,0 +1,71 @@
+{
+  "named": [
+    {
+      "id": "mira_ferreira",
+      "name": "Mira, a Ferreira",
+      "profession": "smith",
+      "home": "bruma_alta",
+      "money": 62,
+      "personality": {"courage": 0.6, "empathy": 0.7, "greed": 0.3, "loyalty": 0.8, "openness": 0.5},
+      "fears": ["faction:mascara_rubra", "thunder"],
+      "preferences": {"likes": ["hidromel", "honestidade"], "dislikes": ["pechincha", "khevri"]},
+      "routine": {"6": "work", "12": "meal", "14": "work", "19": "meal", "20": "social", "22": "sleep"},
+      "goals": ["comprar carvão barato", "mandar a filha estudar com o Credo Claro"]
+    },
+    {
+      "id": "tello_taverneiro",
+      "name": "Tello, o Taverneiro",
+      "profession": "innkeeper",
+      "home": "bruma_alta",
+      "money": 120,
+      "personality": {"courage": 0.4, "empathy": 0.6, "greed": 0.6, "loyalty": 0.5, "openness": 0.9},
+      "fears": ["falencia"],
+      "preferences": {"likes": ["fofoca", "musica"], "dislikes": ["brigas na taverna"]},
+      "routine": {"8": "work", "13": "meal", "14": "work", "23": "sleep"},
+      "goals": ["ouvir toda notícia que passa pela vila"]
+    },
+    {
+      "id": "sela_pescadora",
+      "name": "Sela, a Pescadora",
+      "profession": "fisher",
+      "home": "bruma_alta",
+      "money": 25,
+      "personality": {"courage": 0.7, "empathy": 0.5, "greed": 0.2, "loyalty": 0.6, "openness": 0.4},
+      "fears": ["mar_aberto_a_noite"],
+      "preferences": {"likes": ["silencio", "mare_baixa"], "dislikes": ["companhia_balanca"]},
+      "routine": {"4": "work", "11": "meal", "12": "work", "18": "meal", "19": "social", "21": "sleep"},
+      "goals": ["ver o porto afundado na maré mais baixa do ano"]
+    },
+    {
+      "id": "irmao_calmo",
+      "name": "Irmão Calmo",
+      "profession": "priest",
+      "home": "bruma_alta",
+      "faction": "credo_errante",
+      "money": 8,
+      "personality": {"courage": 0.5, "empathy": 0.9, "greed": 0.05, "loyalty": 0.7, "openness": 0.8},
+      "fears": [],
+      "preferences": {"likes": ["viajantes", "historias"], "dislikes": ["portas fechadas"]},
+      "routine": {"5": "work", "12": "meal", "13": "social", "19": "meal", "21": "sleep"},
+      "goals": ["abrigar todo viajante que chegar", "registrar rumores do Silêncio"]
+    },
+    {
+      "id": "capitao_verruma",
+      "name": "Capitão Verruma",
+      "profession": "raider",
+      "home": "cais_quebrado",
+      "faction": "mascara_rubra",
+      "money": 90,
+      "personality": {"courage": 0.8, "empathy": 0.2, "greed": 0.8, "loyalty": 0.4, "openness": 0.3},
+      "fears": ["forca"],
+      "preferences": {"likes": ["merito", "codigo_rubro"], "dislikes": ["baronato_trigo", "covardes"]},
+      "routine": {"10": "work", "14": "meal", "15": "work", "22": "social", "2": "sleep"},
+      "goals": ["unificar dois bandos sob sua máscara"]
+    }
+  ],
+  "generation_pool": {
+    "first_names": ["Ansel", "Brona", "Cadu", "Dena", "Edrik", "Fiala", "Goro", "Hesta", "Ivo", "Jala", "Kel", "Luma", "Mero", "Nisa", "Oto", "Pia", "Rurik", "Sena", "Tovo", "Ula"],
+    "surnames": ["do Cais", "da Bruma", "Pedra-Fria", "do Moinho", "Sal-Alto", "da Vigília", "Ferro-Velho", "do Bordão", "Voz-Baixa", "da Estrada"],
+    "professions": ["villager", "fisher", "farmer", "miner", "hunter", "weaver", "carpenter", "herbalist"]
+  }
+}

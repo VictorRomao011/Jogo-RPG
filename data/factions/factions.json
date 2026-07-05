@@ -1,0 +1,112 @@
+{
+  "factions": [
+    {
+      "id": "companhia_balanca",
+      "name": "A Companhia da Balança",
+      "thesis": "O comércio reconstruirá Vaethir; fronteiras são ruído.",
+      "gold": 2500, "food": 400, "troops": 60,
+      "aggression": 0.25, "trade_focus": 0.9, "memory_decay": 0.02,
+      "territories": ["celeiros_de_sol"],
+      "relations": {
+        "baronato_trigo": -40, "mascara_rubra": -60, "cla_khevri": 20,
+        "guilda_fole": 40, "credo_errante": 30, "credo_claro": 10
+      }
+    },
+    {
+      "id": "baronato_trigo",
+      "name": "O Baronato do Trigo",
+      "thesis": "Quem alimenta, governa. Ordem feudal é o único remédio provado.",
+      "gold": 900, "food": 1200, "troops": 90,
+      "aggression": 0.55, "trade_focus": 0.3, "memory_decay": 0.01,
+      "territories": ["celeiros_de_sol"],
+      "relations": {
+        "companhia_balanca": -40, "mascara_rubra": -80, "cla_khevri": -50,
+        "guilda_fole": 10, "credo_verde": 20, "credo_fundo": 15
+      }
+    },
+    {
+      "id": "mascara_rubra",
+      "name": "A Máscara Rubra",
+      "thesis": "Vaethir morreu. Nós somos os vermes, e vermes têm direito ao cadáver.",
+      "gold": 300, "food": 150, "troops": 70,
+      "aggression": 0.8, "trade_focus": 0.15, "memory_decay": 0.015,
+      "territories": ["pelagem_cinza", "lamacal_de_ferro"],
+      "relations": {
+        "companhia_balanca": -60, "baronato_trigo": -80, "cla_khevri": -20,
+        "guilda_fole": 0, "credo_errante": -10
+      }
+    },
+    {
+      "id": "cla_khevri",
+      "name": "Os Clãs Khevri",
+      "thesis": "A terra não é de ninguém; nós apenas a percorremos.",
+      "gold": 500, "food": 600, "troops": 55,
+      "aggression": 0.2, "trade_focus": 0.6, "memory_decay": 0.001,
+      "territories": ["estepe_khevra"],
+      "relations": {
+        "companhia_balanca": 20, "baronato_trigo": -50, "mascara_rubra": -20,
+        "credo_errante": 40
+      }
+    },
+    {
+      "id": "guilda_fole",
+      "name": "A Guilda do Fole",
+      "thesis": "O Silêncio foi a alforria: a engenhosidade não precisa de deuses cantores.",
+      "gold": 1800, "food": 300, "troops": 25,
+      "aggression": 0.1, "trade_focus": 0.8, "memory_decay": 0.03,
+      "territories": ["serra_do_bordao"],
+      "relations": {
+        "companhia_balanca": 40, "baronato_trigo": 10, "credo_fundo": -40,
+        "credo_verde": -30, "credo_claro": 20
+      }
+    },
+    {
+      "id": "credo_fundo",
+      "name": "O Credo Fundo",
+      "thesis": "O Silêncio é castigo pela colheita profana. Selai as feridas da pedra.",
+      "gold": 400, "food": 350, "troops": 40,
+      "aggression": 0.35, "trade_focus": 0.2, "memory_decay": 0.005,
+      "territories": ["serra_do_bordao"],
+      "relations": {
+        "guilda_fole": -40, "credo_verde": 15, "credo_errante": 10,
+        "credo_claro": -15, "baronato_trigo": 15
+      }
+    },
+    {
+      "id": "credo_verde",
+      "name": "O Credo Verde",
+      "thesis": "Os Ecos são sementes dos Coros. Quem os colhe, mata a renascença.",
+      "gold": 350, "food": 500, "troops": 35,
+      "aggression": 0.3, "trade_focus": 0.25, "memory_decay": 0.005,
+      "territories": ["bosque_de_vidro"],
+      "relations": {
+        "guilda_fole": -30, "credo_fundo": 15, "credo_errante": 15,
+        "credo_claro": 5, "baronato_trigo": 20
+      }
+    },
+    {
+      "id": "credo_errante",
+      "name": "O Credo Errante",
+      "thesis": "O Silêncio é um teste de travessia. Caminhai, abrigai, contai.",
+      "gold": 300, "food": 400, "troops": 20,
+      "aggression": 0.05, "trade_focus": 0.5, "memory_decay": 0.02,
+      "territories": ["pelagem_cinza"],
+      "relations": {
+        "companhia_balanca": 30, "cla_khevri": 40, "credo_fundo": 10,
+        "credo_verde": 15, "credo_claro": 10, "mascara_rubra": -10
+      }
+    },
+    {
+      "id": "credo_claro",
+      "name": "O Credo Claro",
+      "thesis": "O Silêncio tem causa e a causa tem registro. Catalogai tudo.",
+      "gold": 700, "food": 250, "troops": 30,
+      "aggression": 0.15, "trade_focus": 0.4, "memory_decay": 0.0,
+      "territories": ["voralt"],
+      "relations": {
+        "guilda_fole": 20, "credo_fundo": -15, "credo_verde": 5,
+        "credo_errante": 10, "companhia_balanca": 10
+      }
+    }
+  ]
+}

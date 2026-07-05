@@ -1,0 +1,16 @@
+{
+  "goods": [
+    {"id": "grain", "name": "Grão", "base_price": 2.0, "elasticity": 0.6, "demand_per_capita": 0.4, "category": "food"},
+    {"id": "fish", "name": "Peixe", "base_price": 3.0, "elasticity": 0.6, "demand_per_capita": 0.2, "category": "food"},
+    {"id": "salt", "name": "Sal", "base_price": 5.0, "elasticity": 0.8, "demand_per_capita": 0.05, "category": "food"},
+    {"id": "ale", "name": "Cerveja", "base_price": 4.0, "elasticity": 1.2, "demand_per_capita": 0.1, "category": "luxury"},
+    {"id": "iron", "name": "Ferro", "base_price": 8.0, "elasticity": 1.0, "demand_per_capita": 0.03, "category": "material"},
+    {"id": "vethrite", "name": "Vethrita Morta", "base_price": 40.0, "elasticity": 1.5, "demand_per_capita": 0.005, "category": "material"},
+    {"id": "tools", "name": "Ferramentas", "base_price": 15.0, "elasticity": 1.1, "demand_per_capita": 0.02, "category": "manufactured"},
+    {"id": "cloth", "name": "Tecido", "base_price": 6.0, "elasticity": 1.0, "demand_per_capita": 0.06, "category": "manufactured"},
+    {"id": "leather", "name": "Couro", "base_price": 7.0, "elasticity": 1.0, "demand_per_capita": 0.04, "category": "material"},
+    {"id": "herbs", "name": "Ervas", "base_price": 9.0, "elasticity": 1.3, "demand_per_capita": 0.02, "category": "medicine"},
+    {"id": "leeches", "name": "Sanguessugas Medicinais", "base_price": 12.0, "elasticity": 1.4, "demand_per_capita": 0.01, "category": "medicine"},
+    {"id": "relics", "name": "Relíquias de Voralt", "base_price": 60.0, "elasticity": 2.0, "demand_per_capita": 0.003, "category": "luxury"}
+  ]
+}

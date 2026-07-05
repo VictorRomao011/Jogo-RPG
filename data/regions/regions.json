@@ -1,0 +1,161 @@
+{
+  "regions": [
+    {
+      "id": "pelagem_cinza",
+      "name": "Pelagem Cinza",
+      "biome": "costa_fria",
+      "weathers": ["clear", "cloudy", "rain", "storm", "fog"],
+      "settlements": [
+        {
+          "id": "bruma_alta",
+          "name": "Bruma Alta",
+          "population": 40,
+          "producers": [
+            {"good_id": "fish", "daily_output": 14, "workers": 4},
+            {"good_id": "tools", "daily_output": 1.5, "workers": 1},
+            {"good_id": "cloth", "daily_output": 2, "workers": 2}
+          ]
+        },
+        {
+          "id": "cais_quebrado",
+          "name": "Cais Quebrado",
+          "population": 15,
+          "producers": [
+            {"good_id": "fish", "daily_output": 8, "workers": 3},
+            {"good_id": "salt", "daily_output": 3, "workers": 1}
+          ]
+        }
+      ],
+      "routes": [
+        {"from": "bruma_alta", "to": "cais_quebrado", "days": 1, "danger": 0.15},
+        {"from": "bruma_alta", "to": "vila_moinho", "days": 3, "danger": 0.25}
+      ]
+    },
+    {
+      "id": "celeiros_de_sol",
+      "name": "Os Celeiros de Sol",
+      "biome": "planicie",
+      "weathers": ["clear", "cloudy", "rain", "storm"],
+      "settlements": [
+        {
+          "id": "vila_moinho",
+          "name": "Vila Moinho",
+          "population": 60,
+          "producers": [
+            {"good_id": "grain", "daily_output": 30, "workers": 8},
+            {"good_id": "ale", "daily_output": 6, "workers": 2},
+            {"good_id": "leather", "daily_output": 3, "workers": 2}
+          ]
+        }
+      ],
+      "routes": [
+        {"from": "vila_moinho", "to": "pico_do_bordao", "days": 2, "danger": 0.2},
+        {"from": "vila_moinho", "to": "acampamento_khevri", "days": 3, "danger": 0.15}
+      ]
+    },
+    {
+      "id": "serra_do_bordao",
+      "name": "Serra do Bordão",
+      "biome": "montanha",
+      "weathers": ["clear", "cloudy", "snow", "storm", "fog"],
+      "settlements": [
+        {
+          "id": "pico_do_bordao",
+          "name": "Pico do Bordão",
+          "population": 30,
+          "producers": [
+            {"good_id": "iron", "daily_output": 8, "workers": 5},
+            {"good_id": "vethrite", "daily_output": 1, "workers": 2},
+            {"good_id": "tools", "daily_output": 2, "workers": 1}
+          ]
+        }
+      ],
+      "routes": [
+        {"from": "pico_do_bordao", "to": "aneis_de_voralt", "days": 3, "danger": 0.3}
+      ]
+    },
+    {
+      "id": "voralt",
+      "name": "Voralt, a Cidade que Parou",
+      "biome": "ruina_urbana",
+      "weathers": ["clear", "cloudy", "rain", "fog"],
+      "settlements": [
+        {
+          "id": "aneis_de_voralt",
+          "name": "Anéis de Voralt",
+          "population": 35,
+          "producers": [
+            {"good_id": "relics", "daily_output": 1.2, "workers": 4},
+            {"good_id": "tools", "daily_output": 1, "workers": 1}
+          ]
+        }
+      ],
+      "routes": []
+    },
+    {
+      "id": "lamacal_de_ferro",
+      "name": "Lamaçal de Ferro",
+      "biome": "pantano",
+      "weathers": ["cloudy", "rain", "storm", "fog"],
+      "settlements": [
+        {
+          "id": "refugio_da_lama",
+          "name": "Refúgio da Lama",
+          "population": 20,
+          "producers": [
+            {"good_id": "iron", "daily_output": 4, "workers": 3},
+            {"good_id": "leeches", "daily_output": 5, "workers": 2}
+          ]
+        }
+      ],
+      "routes": [
+        {"from": "refugio_da_lama", "to": "aneis_de_voralt", "days": 2, "danger": 0.35}
+      ]
+    },
+    {
+      "id": "estepe_khevra",
+      "name": "Estepe de Khevra",
+      "biome": "estepe",
+      "weathers": ["clear", "cloudy", "dust", "storm"],
+      "settlements": [
+        {
+          "id": "acampamento_khevri",
+          "name": "Acampamento Khevri",
+          "population": 45,
+          "producers": [
+            {"good_id": "salt", "daily_output": 10, "workers": 4},
+            {"good_id": "leather", "daily_output": 6, "workers": 3}
+          ]
+        }
+      ],
+      "routes": []
+    },
+    {
+      "id": "bosque_de_vidro",
+      "name": "Bosque de Vidro",
+      "biome": "floresta_anomala",
+      "weathers": ["clear", "fog", "rain"],
+      "settlements": [
+        {
+          "id": "vigilia_verde",
+          "name": "Vigília Verde",
+          "population": 12,
+          "producers": [
+            {"good_id": "herbs", "daily_output": 4, "workers": 2}
+          ]
+        }
+      ],
+      "routes": [
+        {"from": "vigilia_verde", "to": "bruma_alta", "days": 2, "danger": 0.2}
+      ]
+    },
+    {
+      "id": "voz_partida",
+      "name": "Arquipélago da Voz Partida",
+      "biome": "vulcanico",
+      "weathers": ["clear", "cloudy", "storm", "fog"],
+      "settlements": [],
+      "routes": []
+    }
+  ]
+}
