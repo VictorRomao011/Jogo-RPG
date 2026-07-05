@@ -12,7 +12,9 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # Deploys enfileiram em vez de cancelar: um push em outra branch não pode
+  # matar a publicação em andamento da branch padrão.
+  cancel-in-progress: false
 
 env:
   GODOT_VERSION: "4.4.1"
