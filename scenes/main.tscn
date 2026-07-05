@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://c1mainecos00001"]
+[gd_scene load_steps=34 format=3 uid="uid://c1mainecos00001"]
 
 [ext_resource type="Script" path="res://source/game/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://source/game/player/player.tscn" id="2_player"]
@@ -13,11 +13,14 @@
 [ext_resource type="PackedScene" path="res://source/ui/screens/journal_screen.tscn" id="11_journal"]
 [ext_resource type="Script" path="res://source/game/world/day_night.gd" id="12_daynight"]
 [ext_resource type="Script" path="res://source/game/world/world_dresser.gd" id="13_dresser"]
+[ext_resource type="Script" path="res://source/game/world/terrain.gd" id="14_terrain"]
+[ext_resource type="Script" path="res://source/game/world/water.gd" id="15_water"]
+[ext_resource type="Script" path="res://source/game/world/village_builder.gd" id="16_village"]
 
-[sub_resource type="ProceduralSkyMaterial" id="SkyMat_main"]
-sky_top_color = Color(0.35, 0.46, 0.6, 1)
-sky_horizon_color = Color(0.64, 0.65, 0.67, 1)
-ground_bottom_color = Color(0.2, 0.17, 0.13, 1)
+[sub_resource type="PhysicalSkyMaterial" id="SkyMat_main"]
+rayleigh_coefficient = 2.5
+mie_coefficient = 0.006
+ground_color = Color(0.18, 0.16, 0.13, 1)
 
 [sub_resource type="Sky" id="Sky_main"]
 sky_material = SubResource("SkyMat_main")
@@ -25,18 +28,11 @@ sky_material = SubResource("SkyMat_main")
 [sub_resource type="Environment" id="Env_main"]
 background_mode = 2
 sky = SubResource("Sky_main")
-tonemap_mode = 2
-
-[sub_resource type="BoxShape3D" id="BoxShape_ground"]
-size = Vector3(200, 1, 200)
-
-[sub_resource type="StandardMaterial3D" id="Material_ground"]
-albedo_color = Color(0.36, 0.43, 0.31, 1)
-roughness = 1.0
-
-[sub_resource type="BoxMesh" id="BoxMesh_ground"]
-material = SubResource("Material_ground")
-size = Vector3(200, 1, 200)
+tonemap_mode = 3
+tonemap_exposure = 1.1
+glow_enabled = true
+glow_intensity = 0.5
+glow_bloom = 0.05
 
 [sub_resource type="StandardMaterial3D" id="Material_house"]
 albedo_color = Color(0.58, 0.52, 0.44, 1)
@@ -66,15 +62,6 @@ height = 0.3
 material = SubResource("Material_ember")
 radius = 0.3
 height = 0.5
-
-[sub_resource type="StandardMaterial3D" id="Material_water"]
-albedo_color = Color(0.13, 0.28, 0.42, 1)
-metallic = 0.2
-roughness = 0.15
-
-[sub_resource type="BoxMesh" id="BoxMesh_water"]
-material = SubResource("Material_water")
-size = Vector3(460, 0.4, 240)
 
 [sub_resource type="BoxShape3D" id="BoxShape_tent"]
 size = Vector3(3, 2.4, 3)
@@ -112,15 +99,19 @@ environment = SubResource("Env_main")
 transform = Transform3D(0.7, -0.5, 0.5, 0, 0.7, 0.7, -0.7, -0.5, 0.5, 0, 20, 0)
 shadow_enabled = true
 
-[node name="Ground" type="StaticBody3D" parent="."]
+[node name="Moon" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.86, 0, -0.86, 0.5, 0, 30, 0)
+light_color = Color(0.6, 0.68, 0.9, 1)
+light_energy = 0.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
-shape = SubResource("BoxShape_ground")
+[node name="Terreno" type="StaticBody3D" parent="."]
+script = ExtResource("14_terrain")
 
-[node name="Mesh" type="MeshInstance3D" parent="Ground"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
-mesh = SubResource("BoxMesh_ground")
+[node name="Mar" type="MeshInstance3D" parent="."]
+script = ExtResource("15_water")
+
+[node name="VilaConstruida" type="Node3D" parent="."]
+script = ExtResource("16_village")
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 8)
@@ -140,42 +131,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -12)
 
 [node name="sleep" type="Marker3D" parent="BrumaAlta"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -6)
-
-[node name="Forja" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2, -16)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Forja"]
-shape = SubResource("BoxShape_house")
-
-[node name="Mesh" type="MeshInstance3D" parent="Forja"]
-mesh = SubResource("BoxMesh_house")
-
-[node name="Taverna" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2, -18)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Taverna"]
-shape = SubResource("BoxShape_house")
-
-[node name="Mesh" type="MeshInstance3D" parent="Taverna"]
-mesh = SubResource("BoxMesh_house")
-
-[node name="Casa1" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 2, -12)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Casa1"]
-shape = SubResource("BoxShape_house")
-
-[node name="Mesh" type="MeshInstance3D" parent="Casa1"]
-mesh = SubResource("BoxMesh_house")
-
-[node name="Casa2" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2, -24)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Casa2"]
-shape = SubResource("BoxShape_house")
-
-[node name="Mesh" type="MeshInstance3D" parent="Casa2"]
-mesh = SubResource("BoxMesh_house")
 
 [node name="Fogueira" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 2)
@@ -295,10 +250,6 @@ shape = SubResource("BoxShape_house")
 [node name="Mesh" type="MeshInstance3D" parent="VigiaCega/Torre"]
 material_override = SubResource("Material_stone")
 mesh = SubResource("BoxMesh_house")
-
-[node name="Oceano" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45, 218)
-mesh = SubResource("BoxMesh_water")
 
 [node name="AcampamentoRubro" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0, -58)

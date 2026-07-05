@@ -14,6 +14,7 @@ var _station_quality := 0.7
 
 func _ready() -> void:
 	add_to_group("modal_screen")
+	($Panel as Control).theme = UIStyle.theme()
 	visible = false
 	close_button.pressed.connect(close)
 

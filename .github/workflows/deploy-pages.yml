@@ -41,8 +41,10 @@ jobs:
           mv /tmp/templates/templates/* \
             "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
 
-      - name: Importar recursos
-        run: ./godot --headless --path . --import || true
+      - name: Importar recursos (2× — a primeira gera o cache de classes)
+        run: |
+          ./godot --headless --path . --import || true
+          ./godot --headless --path . --import
 
       - name: Exportar Web (sem threads — compatível com o Pages)
         run: |

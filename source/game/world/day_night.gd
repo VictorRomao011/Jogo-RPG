@@ -7,6 +7,7 @@ extends Node
 const WEATHER_CHECK_SECONDS := 4.0
 
 var _sun: DirectionalLight3D
+var _moon: DirectionalLight3D
 var _env: Environment
 var _weather_timer := 0.0
 var _fog_target := 0.002
@@ -15,6 +16,7 @@ var _weather_dim := 1.0
 
 func _ready() -> void:
 	_sun = get_node_or_null("../Sun")
+	_moon = get_node_or_null("../Moon")
 	var world_env: WorldEnvironment = get_node_or_null("../WorldEnvironment")
 	if world_env != null and world_env.environment != null:
 		_env = world_env.environment
@@ -52,7 +54,12 @@ func _update_sun(f: float) -> void:
 	else:
 		_sun.light_color = Color(0.55, 0.62, 0.85)
 	if _env != null:
-		_env.background_energy_multiplier = (0.18 + 0.92 * day_strength) * _weather_dim
+		_env.background_energy_multiplier = (0.16 + 0.9 * day_strength) * _weather_dim
+	# Lua assume à noite; janelas da vila acendem com o escuro.
+	if _moon != null:
+		_moon.light_energy = 0.28 * (1.0 - day_strength) * _weather_dim
+	var glow := clampf(1.0 - day_strength * 1.8, 0.0, 1.0) * 1.8
+	get_tree().call_group("village", "set_window_glow", glow)
 
 
 func _read_weather() -> void:

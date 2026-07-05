@@ -49,6 +49,14 @@ func _ready() -> void:
 	super._ready()
 	# Câmera em 3ª pessoa: o braço colide com o mundo, nunca com o corpo.
 	spring_arm.add_excluded_object(get_rid())
+	# Corpo humanoide animado no lugar da cápsula.
+	var capsule := get_node_or_null("Mesh")
+	if capsule != null:
+		capsule.visible = false
+	add_child(HumanoidRig.make(
+		Color(0.85, 0.68, 0.55), Color(0.24, 0.34, 0.48),
+		Color(0.26, 0.23, 0.2), Color(0.2, 0.14, 0.1)
+	))
 	if not Actions.is_touch():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	Actions.device_changed.connect(_on_device_changed)

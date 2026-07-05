@@ -16,6 +16,7 @@ extends CanvasLayer
 
 func _ready() -> void:
 	add_to_group("pause_menu")
+	($Panel as Control).theme = UIStyle.theme()
 	visible = false
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	resume_button.pressed.connect(close)

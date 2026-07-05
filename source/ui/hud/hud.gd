@@ -27,6 +27,15 @@ var _hint_timer := 25.0
 
 func _ready() -> void:
 	add_to_group("hud")
+	($Root as Control).theme = UIStyle.theme()
+	stamina_bar.add_theme_stylebox_override(
+		"fill", UIStyle.bar_fill(Color(0.55, 0.75, 0.35))
+	)
+	health_bar.add_theme_stylebox_override(
+		"fill", UIStyle.bar_fill(Color(0.75, 0.28, 0.22))
+	)
+	if not Sim.world_healthy():
+		show_dialog("", "Aviso: os dados do mundo não carregaram nesta build.")
 	stamina_bar.modulate.a = 0.0
 	health_bar.visible = false
 	rumor_label.modulate.a = 0.0
@@ -84,7 +93,7 @@ func _process(delta: float) -> void:
 		if _fade_timer <= 0.0:
 			create_tween().tween_property(stamina_bar, "modulate:a", 0.0, 0.6)
 	rumor_label.modulate.a = maxf(0.0, rumor_label.modulate.a - delta * 0.1)
-	clock_label.text = str(Sim.world.clock.timestamp())
+	clock_label.text = Sim.time_text()
 	if _hint_timer > 0.0:
 		_hint_timer -= delta
 		if _hint_timer <= 0.0:

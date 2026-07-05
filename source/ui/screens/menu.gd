@@ -15,7 +15,11 @@ extends Control
 
 
 func _ready() -> void:
+	theme = UIStyle.theme()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_spawn_embers()
+	modulate.a = 0.0
+	create_tween().tween_property(self, "modulate:a", 1.0, 0.8)
 	continue_button.visible = FileAccess.file_exists(Sim.SAVE_PATH)
 	continue_button.pressed.connect(_start)
 	new_button.pressed.connect(_new_game)
@@ -52,6 +56,27 @@ func _layout() -> void:
 	var half_height := UIScale.units_for_px(260.0)
 	vbox.offset_top = -half_height
 	vbox.offset_bottom = half_height
+
+
+## Brasas subindo devagar — o Silêncio tem 173 anos, mas o fogo continua.
+func _spawn_embers() -> void:
+	var embers := CPUParticles2D.new()
+	embers.amount = 36
+	embers.lifetime = 7.0
+	embers.preprocess = 6.0
+	embers.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	embers.emission_rect_extents = Vector2(700, 10)
+	embers.direction = Vector2(0, -1)
+	embers.spread = 12.0
+	embers.gravity = Vector2(0, -14)
+	embers.initial_velocity_min = 18.0
+	embers.initial_velocity_max = 46.0
+	embers.scale_amount_min = 1.5
+	embers.scale_amount_max = 4.0
+	embers.color = Color(0.9, 0.62, 0.3, 0.5)
+	embers.position = Vector2(640, 760)
+	add_child(embers)
+	move_child(embers, 1)  # acima do fundo, atrás dos botões
 
 
 func _start() -> void:

@@ -130,12 +130,15 @@ func _spawn_bandits(count: int, origin := Vector3.INF) -> void:
 		add_child(bandit)
 		var angle := randf() * TAU
 		if origin == Vector3.INF:
+			# Emboscadas nascem no ermo, nunca em cima do jogador/vila.
 			bandit.global_position = player.global_position \
-				+ Vector3(cos(angle), 0.0, sin(angle)) * randf_range(25.0, 35.0)
+				+ Vector3(cos(angle), 0.0, sin(angle)) * randf_range(40.0, 55.0)
 		else:
 			bandit.global_position = origin \
 				+ Vector3(cos(angle), 0.0, sin(angle)) * randf_range(2.0, 4.0)
-		bandit.global_position.y = 1.0
+		bandit.global_position.y = Terrain.height_at(
+			bandit.global_position.x, bandit.global_position.z
+		) + 1.0
 		active += 1
 
 

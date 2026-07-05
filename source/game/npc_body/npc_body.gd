@@ -43,7 +43,17 @@ func bind_record(npc_record: NPCRecord, spots: Dictionary) -> void:
 	var talk: Interactable = get_node_or_null("Talk")
 	if talk != null:
 		talk.prompt = "Conversar"
+	_attach_body()
 	_attach_name_tag()
+
+
+## Corpo humanoide com paleta própria (cada aldeão tem a sua cara).
+func _attach_body() -> void:
+	var capsule := get_node_or_null("Mesh")
+	if capsule != null:
+		capsule.visible = false
+	var palette := HumanoidRig.palette_for(record.id)
+	add_child(HumanoidRig.make(palette[0], palette[1], palette[2], palette[3]))
 
 
 ## Nome flutuante discreto — só de perto (o mundo não vira HUD).
@@ -51,11 +61,12 @@ func _attach_name_tag() -> void:
 	var tag := Label3D.new()
 	tag.text = record.display_name
 	tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	tag.position = Vector3(0, 2.15, 0)
-	tag.font_size = 40
+	tag.position = Vector3(0, 2.1, 0)
+	tag.font_size = 30
+	tag.pixel_size = 0.004
 	tag.outline_size = 8
 	tag.modulate = Color(1.0, 0.95, 0.8)
-	tag.visibility_range_end = 14.0
+	tag.visibility_range_end = 10.0
 	add_child(tag)
 
 

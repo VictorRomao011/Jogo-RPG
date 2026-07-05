@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Ecos de Vaethir"
 config/description="RPG de mundo aberto sistêmico — o mundo vive com ou sem você."
-config/version="0.3.0"
+config/version="0.4.0"
 run/main_scene="res://scenes/menu.tscn"
 config/features=PackedStringArray("4.4")
 config/icon="res://assets/icon.svg"

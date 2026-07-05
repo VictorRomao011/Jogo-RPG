@@ -15,6 +15,10 @@ var _fleeing := false
 
 func _ready() -> void:
 	_timer = randf_range(1.0, 4.0)
+	var capsule := get_node_or_null("Mesh")
+	if capsule != null:
+		capsule.visible = false
+	add_child(QuadrupedRig.make(Color(0.48, 0.36, 0.25)))
 
 
 func _physics_process(delta: float) -> void:

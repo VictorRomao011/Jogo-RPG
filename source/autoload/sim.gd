@@ -43,6 +43,20 @@ func reset_world() -> void:
 	world.day_simulated.connect(_on_day_simulated)
 
 
+## Leitura do relógio à prova de falhas (builds release não abortam em
+## erro — melhor uma string vazia do que '<null>' na tela).
+func time_text() -> String:
+	if world == null or world.clock == null:
+		return ""
+	var stamp: Variant = world.clock.timestamp()
+	return stamp if stamp is String else ""
+
+
+## Sanidade do mundo para diagnóstico visível (dados carregaram?).
+func world_healthy() -> bool:
+	return world != null and not world.settlement_ids.is_empty()
+
+
 ## Dormir/viajar aceleram o mundo de verdade (não é fade-out fake).
 func skip_hours(hours: int) -> void:
 	for _i in range(hours):
