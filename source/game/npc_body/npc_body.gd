@@ -43,6 +43,20 @@ func bind_record(npc_record: NPCRecord, spots: Dictionary) -> void:
 	var talk: Interactable = get_node_or_null("Talk")
 	if talk != null:
 		talk.prompt = "Conversar"
+	_attach_name_tag()
+
+
+## Nome flutuante discreto — só de perto (o mundo não vira HUD).
+func _attach_name_tag() -> void:
+	var tag := Label3D.new()
+	tag.text = record.display_name
+	tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	tag.position = Vector3(0, 2.15, 0)
+	tag.font_size = 40
+	tag.outline_size = 8
+	tag.modulate = Color(1.0, 0.95, 0.8)
+	tag.visibility_range_end = 14.0
+	add_child(tag)
 
 
 ## Conversa: a fala vem do que o NPC sabe (Dialogue), nunca de script fixo.

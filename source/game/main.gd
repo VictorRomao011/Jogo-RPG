@@ -34,6 +34,11 @@ func _ready() -> void:
 	if not saved.is_empty():
 		player.load_data(saved)
 	_spawn_position = player.global_position
+	# Acampamento da Máscara Rubra sempre habitado — combate garantido
+	# para quem for procurar (e quem não for, ouve os rumores).
+	var camp := get_node_or_null("AcampamentoRubro")
+	if camp != null:
+		_spawn_bandits(2, camp.global_position)
 
 
 func _process(delta: float) -> void:
@@ -110,7 +115,7 @@ func on_horn_blown(_position: Vector3) -> void:
 	_spawn_bandits(1)
 
 
-func _spawn_bandits(count: int) -> void:
+func _spawn_bandits(count: int, origin := Vector3.INF) -> void:
 	var active := 0
 	for node in get_tree().get_nodes_in_group("bandits"):
 		if node is Bandit and node.is_alive():
@@ -124,8 +129,12 @@ func _spawn_bandits(count: int) -> void:
 		var bandit: Bandit = scene.instantiate()
 		add_child(bandit)
 		var angle := randf() * TAU
-		bandit.global_position = player.global_position \
-			+ Vector3(cos(angle), 0.0, sin(angle)) * randf_range(25.0, 35.0)
+		if origin == Vector3.INF:
+			bandit.global_position = player.global_position \
+				+ Vector3(cos(angle), 0.0, sin(angle)) * randf_range(25.0, 35.0)
+		else:
+			bandit.global_position = origin \
+				+ Vector3(cos(angle), 0.0, sin(angle)) * randf_range(2.0, 4.0)
 		bandit.global_position.y = 1.0
 		active += 1
 

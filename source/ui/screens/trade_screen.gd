@@ -62,16 +62,28 @@ func _rebuild() -> void:
 		var buy := Button.new()
 		buy.text = "Comprar"
 		buy.pressed.connect(_on_buy.bind(good_id))
+		_touch_size(buy)
 		row.add_child(buy)
 		if first_button == null:
 			first_button = buy
 		var sell := Button.new()
 		sell.text = "Vender"
 		sell.pressed.connect(_on_sell.bind(good_id))
+		_touch_size(sell)
 		row.add_child(sell)
+		label.add_theme_font_size_override("font_size", UIScale.font_size(14))
 		rows_container.add_child(row)
+	_touch_size(close_button)
 	if first_button != null and Actions.active_device == Actions.Device.GAMEPAD:
 		first_button.grab_focus()
+
+
+## Alvo de toque real (≥44px físicos) em qualquer tela.
+func _touch_size(button: Button) -> void:
+	button.custom_minimum_size = Vector2(
+		UIScale.units_for_px(96.0), UIScale.units_for_px(44.0)
+	)
+	button.add_theme_font_size_override("font_size", UIScale.font_size(15))
 
 
 func _on_buy(good_id: String) -> void:

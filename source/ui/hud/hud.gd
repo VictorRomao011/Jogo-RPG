@@ -38,6 +38,7 @@ func _ready() -> void:
 	_apply_breakpoint()
 	UIScale.breakpoint_changed.connect(func(_bp: String) -> void: _apply_breakpoint())
 	Config.settings_changed.connect(_apply_breakpoint)
+	get_viewport().size_changed.connect(_apply_breakpoint)
 	interact_button.pressed.connect(func() -> void: Actions.touch_tap("interact"))
 	journal_button.visible = Actions.is_touch()
 	journal_button.pressed.connect(func() -> void: Actions.touch_tap("open_journal"))
@@ -168,6 +169,73 @@ func _apply_breakpoint() -> void:
 	rumor_label.add_theme_font_size_override("font_size", UIScale.font_size(16))
 	clock_label.add_theme_font_size_override("font_size", UIScale.font_size(14))
 	dialog_label.add_theme_font_size_override("font_size", UIScale.font_size(18))
+	if Actions.is_touch():
+		_layout_touch_hud()
+
+
+## Layout touch em pixels FÍSICOS: botões ~13% do lado curto da tela
+## (mín. 64px), posicionados nas zonas dos polegares — funciona em
+## retrato e paisagem, sem obstruir o centro da tela.
+func _layout_touch_hud() -> void:
+	var btn := UIScale.units_for_px(clampf(UIScale.short_side_px() * 0.14, 64.0, 170.0))
+	var margin := UIScale.units_for_px(14.0)
+	var root: Control = $Root
+	var vp := root.size
+	var font := UIScale.font_size(15)
+
+	# Cluster de combate: arco no canto inferior direito. O cluster está
+	# ancorado no canto (tamanho 0); filhos crescem para cima/esquerda.
+	action_cluster.offset_left = 0.0
+	action_cluster.offset_top = 0.0
+	var cluster_nodes := {
+		"attack_light": [Vector2(-btn * 1.18, -btn * 1.18), 1.15],
+		"dodge": [Vector2(-btn * 2.35, -btn * 1.05), 0.95],
+		"jump": [Vector2(-btn * 1.12, -btn * 2.42), 0.95],
+		"parry": [Vector2(-btn * 2.25, -btn * 2.2), 0.95],
+		"sneak": [Vector2(-btn * 3.4, -btn * 1.0), 0.85],
+	}
+	for button_name: String in cluster_nodes.keys():
+		var button: Button = action_cluster.get_node_or_null(NodePath(button_name))
+		if button == null:
+			continue
+		var side: float = btn * cluster_nodes[button_name][1]
+		button.size = Vector2(side, side)
+		button.position = cluster_nodes[button_name][0] - Vector2(margin, margin)
+		button.add_theme_font_size_override("font_size", font)
+
+	# Interagir: acima do cluster, largo (alvo fácil).
+	interact_button.size = Vector2(btn * 2.1, btn * 0.72)
+	interact_button.position = Vector2(
+		vp.x - btn * 2.1 - margin, vp.y - btn * 3.65
+	)
+	interact_button.add_theme_font_size_override("font_size", font)
+
+	# Caderno e pausa: topo, longe dos polegares, tamanho de toque real.
+	journal_button.size = Vector2(btn * 1.5, btn * 0.62)
+	journal_button.position = Vector2(margin, margin)
+	journal_button.add_theme_font_size_override("font_size", font)
+	pause_button.size = Vector2(btn * 0.62, btn * 0.62)
+	pause_button.position = Vector2(margin + btn * 1.5 + margin * 0.5, margin)
+	pause_button.add_theme_font_size_override("font_size", UIScale.font_size(20))
+
+	# Barras centrais proporcionais à tela.
+	var bar_width := minf(vp.x * 0.42, UIScale.units_for_px(360.0))
+	var bar_height := UIScale.units_for_px(9.0)
+	stamina_bar.offset_left = -bar_width * 0.5
+	stamina_bar.offset_right = bar_width * 0.5
+	stamina_bar.offset_top = -bar_height * 4.4
+	stamina_bar.offset_bottom = -bar_height * 3.4
+	health_bar.offset_left = -bar_width * 0.5
+	health_bar.offset_right = bar_width * 0.5
+	health_bar.offset_top = -bar_height * 6.0
+	health_bar.offset_bottom = -bar_height * 5.0
+
+	# Diálogo: largura de leitura confortável, acima das barras.
+	var dialog_width := minf(vp.x * 0.92, UIScale.units_for_px(700.0))
+	dialog_panel.offset_left = -dialog_width * 0.5
+	dialog_panel.offset_right = dialog_width * 0.5
+	dialog_panel.offset_top = -UIScale.units_for_px(150.0)
+	dialog_panel.offset_bottom = -UIScale.units_for_px(78.0)
 	# Alto contraste (GDD §14.4): contorno forte em todo texto da HUD.
 	var outline := 8 if Config.high_contrast else 0
 	for label: Label in [rumor_label, clock_label, dialog_label]:

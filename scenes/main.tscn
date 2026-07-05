@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://c1mainecos00001"]
+[gd_scene load_steps=36 format=3 uid="uid://c1mainecos00001"]
 
 [ext_resource type="Script" path="res://source/game/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://source/game/player/player.tscn" id="2_player"]
@@ -66,6 +66,22 @@ height = 0.3
 material = SubResource("Material_ember")
 radius = 0.3
 height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="Material_water"]
+albedo_color = Color(0.13, 0.28, 0.42, 1)
+metallic = 0.2
+roughness = 0.15
+
+[sub_resource type="BoxMesh" id="BoxMesh_water"]
+material = SubResource("Material_water")
+size = Vector3(460, 0.4, 240)
+
+[sub_resource type="BoxShape3D" id="BoxShape_tent"]
+size = Vector3(3, 2.4, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tent"]
+material = SubResource("Material_wood")
+size = Vector3(3, 2.4, 3)
 
 [sub_resource type="SphereShape3D" id="SphereShape_fire"]
 radius = 1.5
@@ -279,6 +295,73 @@ shape = SubResource("BoxShape_house")
 [node name="Mesh" type="MeshInstance3D" parent="VigiaCega/Torre"]
 material_override = SubResource("Material_stone")
 mesh = SubResource("BoxMesh_house")
+
+[node name="Oceano" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45, 218)
+mesh = SubResource("BoxMesh_water")
+
+[node name="AcampamentoRubro" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0, -58)
+
+[node name="Tenda1" type="StaticBody3D" parent="AcampamentoRubro"]
+transform = Transform3D(0.9, 0, 0.25, 0, 1, 0, -0.25, 0, 0.9, -3, 1.2, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AcampamentoRubro/Tenda1"]
+shape = SubResource("BoxShape_tent")
+
+[node name="Mesh" type="MeshInstance3D" parent="AcampamentoRubro/Tenda1"]
+mesh = SubResource("BoxMesh_tent")
+
+[node name="Tenda2" type="StaticBody3D" parent="AcampamentoRubro"]
+transform = Transform3D(0.85, 0, -0.35, 0, 1, 0, 0.35, 0, 0.85, 3.4, 1.2, 1.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AcampamentoRubro/Tenda2"]
+shape = SubResource("BoxShape_tent")
+
+[node name="Mesh" type="MeshInstance3D" parent="AcampamentoRubro/Tenda2"]
+mesh = SubResource("BoxMesh_tent")
+
+[node name="CampLogs" type="MeshInstance3D" parent="AcampamentoRubro"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, -2)
+mesh = SubResource("CylinderMesh_logs")
+
+[node name="CampEmber" type="MeshInstance3D" parent="AcampamentoRubro"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -2)
+mesh = SubResource("SphereMesh_ember")
+
+[node name="CampLight" type="OmniLight3D" parent="AcampamentoRubro"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -2)
+light_color = Color(1, 0.55, 0.25, 1)
+light_energy = 1.8
+omni_range = 9.0
+
+[node name="CaixaDoCais" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.4, -2)
+script = ExtResource("9_loot")
+item_id = "fish"
+quantity = 3
+owner_npc_id = ""
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CaixaDoCais"]
+shape = SubResource("BoxShape_chest")
+
+[node name="Mesh" type="MeshInstance3D" parent="CaixaDoCais"]
+material_override = SubResource("Material_wood")
+mesh = SubResource("BoxMesh_chest")
+
+[node name="BarrilDeSal" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.4, -1)
+script = ExtResource("9_loot")
+item_id = "salt"
+quantity = 2
+owner_npc_id = ""
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BarrilDeSal"]
+shape = SubResource("BoxShape_chest")
+
+[node name="Mesh" type="MeshInstance3D" parent="BarrilDeSal"]
+material_override = SubResource("Material_wood")
+mesh = SubResource("BoxMesh_chest")
 
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
 

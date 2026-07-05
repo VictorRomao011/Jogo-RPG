@@ -73,10 +73,19 @@ func _rebuild_items() -> void:
 			var use := Button.new()
 			use.text = "Comer" if meta.get("nutrition", 0.0) > 0.0 else "Usar"
 			use.pressed.connect(_on_use.bind(item_id))
+			use.custom_minimum_size = Vector2(
+				UIScale.units_for_px(84.0), UIScale.units_for_px(44.0)
+			)
+			use.add_theme_font_size_override("font_size", UIScale.font_size(15))
 			row.add_child(use)
 			if first_button == null:
 				first_button = use
+		label.add_theme_font_size_override("font_size", UIScale.font_size(14))
 		items_rows.add_child(row)
+	close_button.custom_minimum_size.y = UIScale.units_for_px(44.0)
+	close_button.add_theme_font_size_override("font_size", UIScale.font_size(15))
+	skills_label.add_theme_font_size_override("font_size", UIScale.font_size(13))
+	rumors_label.add_theme_font_size_override("font_size", UIScale.font_size(13))
 	if first_button != null and Actions.active_device == Actions.Device.GAMEPAD:
 		first_button.grab_focus()
 

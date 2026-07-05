@@ -52,10 +52,21 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func open() -> void:
 	_load_current_values()
+	_apply_touch_sizes()
 	visible = true
 	get_tree().paused = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	resume_button.grab_focus()
+
+
+## Fontes e alturas de toque reais em qualquer tela.
+func _apply_touch_sizes() -> void:
+	var font := UIScale.font_size(16)
+	for node in get_node("Panel/VBox").get_children():
+		if node is Label or node is Button or node is CheckButton or node is OptionButton:
+			node.add_theme_font_size_override("font_size", font)
+		if node is Button or node is OptionButton:
+			node.custom_minimum_size.y = UIScale.units_for_px(46.0)
 
 
 func close() -> void:

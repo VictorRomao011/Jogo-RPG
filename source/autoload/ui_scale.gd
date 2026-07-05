@@ -36,28 +36,45 @@ func _reevaluate() -> void:
 		breakpoint_changed.emit(BREAKPOINT_NAMES[current])
 
 
-func _classify(size: Vector2, aspect: float) -> int:
-	var is_mobile := OS.get_name() in ["Android", "iOS"]
+func _classify(_size: Vector2, aspect: float) -> int:
+	# Web em celular também é mobile: o que decide é ter touchscreen.
+	var is_mobile := OS.get_name() in ["Android", "iOS"] \
+		or DisplayServer.is_touchscreen_available()
 	if is_mobile:
-		var inches := _diagonal_inches(size)
-		if inches >= 7.0:
+		var win := Vector2(DisplayServer.window_get_size())
+		var short_side := minf(win.x, win.y)
+		if short_side >= 1100.0:
 			return Breakpoint.TABLET
-		return Breakpoint.PHONE_SMALL if inches < 5.7 else Breakpoint.PHONE_LARGE
+		return Breakpoint.PHONE_SMALL if short_side < 700.0 else Breakpoint.PHONE_LARGE
 	if aspect >= 2.2:
 		return Breakpoint.ULTRAWIDE
 	return Breakpoint.DESKTOP
 
 
-func _diagonal_inches(size: Vector2) -> float:
-	var dpi := maxf(float(DisplayServer.screen_get_dpi()), 96.0)
-	return size.length() / dpi
+## Pixels físicos por unidade de canvas no stretch atual. Em retrato num
+## celular a UI encolhe ~3×; todo layout touch usa isto para ter tamanho
+## FÍSICO garantido (nunca botão de 27px).
+func canvas_unit_scale() -> float:
+	var win := Vector2(DisplayServer.window_get_size())
+	var units := get_viewport().get_visible_rect().size
+	return win.x / maxf(units.x, 1.0)
+
+
+## Converte pixels físicos desejados em unidades de canvas.
+func units_for_px(px: float) -> float:
+	return px / maxf(canvas_unit_scale(), 0.001)
+
+
+## Lado curto físico da janela (px) — base para dimensionar botões touch.
+func short_side_px() -> float:
+	var win := Vector2(DisplayServer.window_get_size())
+	return minf(win.x, win.y)
 
 
 ## Tamanho de fonte seguro: escala com a tela e com a preferência do
-## jogador (Config.font_scale), nunca abaixo do legível.
+## jogador (Config.font_scale), nunca abaixo do legível — o mínimo é em
+## pixels FÍSICOS convertidos para unidades do canvas (funciona no stretch).
 func font_size(base: int) -> int:
-	var dpi := maxf(float(DisplayServer.screen_get_dpi()), 96.0)
-	var min_px := int(MIN_FONT_PT * dpi / 72.0)
 	var scale_factor: float = Config.font_scale
 	match current:
 		Breakpoint.PHONE_SMALL:
@@ -68,7 +85,10 @@ func font_size(base: int) -> int:
 			scale_factor *= 1.1
 		Breakpoint.ULTRAWIDE:
 			scale_factor *= 1.05
-	return maxi(int(base * scale_factor), min_px if OS.get_name() == "Android" else base)
+	var scaled := int(base * scale_factor)
+	if DisplayServer.is_touchscreen_available():
+		return maxi(scaled, int(units_for_px(15.0)))
+	return scaled
 
 
 ## Margem segura (notch/ilha): UI crítica nunca embaixo de recorte de tela.

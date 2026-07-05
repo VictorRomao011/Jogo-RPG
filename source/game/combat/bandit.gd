@@ -37,6 +37,15 @@ func _ready() -> void:
 	weapon.swing_time = 0.6
 	posture_broken.connect(func(_actor: CombatActor) -> void: _stagger_timer = 1.2)
 	died.connect(_on_died)
+	var tag := Label3D.new()
+	tag.text = "Máscara Rubra"
+	tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	tag.position = Vector3(0, 2.2, 0)
+	tag.font_size = 36
+	tag.outline_size = 8
+	tag.modulate = Color(0.95, 0.35, 0.3)
+	tag.visibility_range_end = 20.0
+	add_child(tag)
 
 
 func _physics_process(delta: float) -> void:

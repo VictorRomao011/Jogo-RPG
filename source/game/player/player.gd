@@ -41,11 +41,14 @@ var _dodge_cooldown := 0.0
 var _touch_attack_hold := -1.0
 
 @onready var camera_pivot: Node3D = $CameraPivot
-@onready var camera: Camera3D = $CameraPivot/Camera3D
+@onready var spring_arm: SpringArm3D = $CameraPivot/SpringArm3D
+@onready var camera: Camera3D = $CameraPivot/SpringArm3D/Camera3D
 
 
 func _ready() -> void:
 	super._ready()
+	# Câmera em 3ª pessoa: o braço colide com o mundo, nunca com o corpo.
+	spring_arm.add_excluded_object(get_rid())
 	if not Actions.is_touch():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	Actions.device_changed.connect(_on_device_changed)
@@ -113,7 +116,8 @@ func _process_look(_delta: float) -> void:
 func _apply_look(delta_look: Vector2) -> void:
 	rotate_y(-delta_look.x)
 	camera_pivot.rotate_x(-delta_look.y)
-	camera_pivot.rotation.x = clampf(camera_pivot.rotation.x, -1.2, 1.2)
+	# Limites de 3ª pessoa: bem para baixo, moderado para cima.
+	camera_pivot.rotation.x = clampf(camera_pivot.rotation.x, -1.15, 0.5)
 
 
 func _process_movement(delta: float) -> void:

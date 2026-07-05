@@ -63,10 +63,17 @@ func _rebuild() -> void:
 		var button := Button.new()
 		button.text = "Fabricar"
 		button.pressed.connect(_on_craft.bind(recipe_id))
+		button.custom_minimum_size = Vector2(
+			UIScale.units_for_px(96.0), UIScale.units_for_px(44.0)
+		)
+		button.add_theme_font_size_override("font_size", UIScale.font_size(15))
+		label.add_theme_font_size_override("font_size", UIScale.font_size(14))
 		row.add_child(button)
 		if first_button == null:
 			first_button = button
 		rows_container.add_child(row)
+	close_button.custom_minimum_size.y = UIScale.units_for_px(44.0)
+	close_button.add_theme_font_size_override("font_size", UIScale.font_size(15))
 	if first_button != null and Actions.active_device == Actions.Device.GAMEPAD:
 		first_button.grab_focus()
 

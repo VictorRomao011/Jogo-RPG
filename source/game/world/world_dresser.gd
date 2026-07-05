@@ -6,7 +6,9 @@ extends Node3D
 
 const TREE_COUNT := 130
 const ROCK_COUNT := 45
+const CRITTER_COUNT := 9
 const AREA := 92.0
+const CRITTER_SCENE := "res://source/game/world/critter.tscn"
 
 ## Zonas livres: {centro, raio} — vila, spawn, POIs.
 const CLEAR_ZONES := [
@@ -55,6 +57,14 @@ func _ready() -> void:
 		var pos := _free_position()
 		if pos != Vector3.INF:
 			add_child(_make_rock(pos, rock_mesh))
+	var critter_scene: PackedScene = load(CRITTER_SCENE)
+	if critter_scene != null:
+		for _i in range(CRITTER_COUNT):
+			var pos := _free_position()
+			if pos != Vector3.INF:
+				var critter: Critter = critter_scene.instantiate()
+				add_child(critter)
+				critter.position = pos + Vector3(0, 0.5, 0)
 
 
 func _free_position() -> Vector3:

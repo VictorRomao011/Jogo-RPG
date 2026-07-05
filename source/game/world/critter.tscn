@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://c1critterecos01"]
+
+[ext_resource type="Script" path="res://source/game/world/critter.gd" id="1_critter"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_critter"]
+radius = 0.28
+height = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Material_critter"]
+albedo_color = Color(0.5, 0.38, 0.26, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_critter"]
+material = SubResource("Material_critter")
+radius = 0.28
+height = 0.95
+
+[node name="Critter" type="CharacterBody3D"]
+script = ExtResource("1_critter")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
+shape = SubResource("CapsuleShape3D_critter")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.0, -1, 0, 1, 0.0, 0, 0.45, 0)
+mesh = SubResource("CapsuleMesh_critter")
