@@ -20,6 +20,12 @@ var parry_timer := 0.0
 ## Ferimentos leves localizados: "leg" (manca), "arm" (ataque lento).
 var wounds: Dictionary = {}
 var weapon: Weapon = Weapon.new()
+## Quem acertou por último (para atribuir morte/testemunho).
+var last_attacker: CombatActor
+
+
+func _ready() -> void:
+	add_to_group("combat_actors")
 
 
 func _physics_process(delta: float) -> void:
@@ -32,6 +38,7 @@ func begin_parry() -> void:
 
 
 func take_hit(attacker: CombatActor, damage: float, posture_damage: float, limb := "torso") -> void:
+	last_attacker = attacker
 	if parry_timer > 0.0:
 		# Aparo perfeito: atacante perde postura, defensor nada.
 		attacker.posture = maxf(0.0, attacker.posture - posture_damage * 2.0)

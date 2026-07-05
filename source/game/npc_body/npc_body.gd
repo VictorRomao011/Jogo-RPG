@@ -17,9 +17,37 @@ var _has_target := false
 var _perception_timer := 0.0
 
 
+func _ready() -> void:
+	add_to_group("npc_bodies")
+	var talk: Interactable = get_node_or_null("Talk")
+	if talk != null:
+		talk.interacted.connect(_on_talk)
+
+
 func bind_record(npc_record: NPCRecord, spots: Dictionary) -> void:
 	record = npc_record
 	activity_spots = spots
+	var talk: Interactable = get_node_or_null("Talk")
+	if talk != null:
+		talk.prompt = "Conversar"
+
+
+## Conversa: a fala vem do que o NPC sabe (Dialogue), nunca de script fixo.
+func _on_talk(_by: Node) -> void:
+	if record == null or not record.alive:
+		return
+	var line := Dialogue.line_for(
+		record, Sim.world.clock.day(), Sim.world.director.world_record
+	)
+	var hud := get_tree().get_first_node_in_group("hud")
+	if hud != null:
+		hud.show_dialog(record.display_name, line)
+	# Conversar deixa rastro: o NPC lembra do forasteiro (e simpatiza um pouco).
+	record.remember(
+		"conversa", "troquei palavras com o forasteiro",
+		Sim.world.clock.day(), 1.0, "player"
+	)
+	record.player_opinion = clampf(record.player_opinion + 1.0, -100.0, 100.0)
 
 
 func _physics_process(delta: float) -> void:

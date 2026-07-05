@@ -1,8 +1,10 @@
 class_name Player
-extends CharacterBody3D
+extends CombatActor
 ## Controlador do jogador. Consome APENAS ações semânticas do Actions
 ## (GDD §15.1) — funciona idêntico com teclado, gamepad e touch.
-## Stamina é a moeda universal; correr treina Vigor (fazer é aprender).
+## Stamina é a moeda universal; correr treina Vigor, aparar treina Aparo
+## (fazer é aprender). Herda vida/postura/aparo de CombatActor: as mesmas
+## regras de combate valem para todos.
 
 signal stamina_changed(current: float, maximum: float)
 signal interact_requested
@@ -15,6 +17,10 @@ const MOUSE_SENSITIVITY := 0.0025
 const TOUCH_LOOK_SENSITIVITY := 0.005
 const SPRINT_COST_PER_SEC := 8.0
 const STAMINA_REGEN_PER_SEC := 12.0
+const DODGE_COST := 12.0
+const DODGE_IFRAMES := 0.3
+## No touch, segurar o botão de ataque além disso vira ataque forte.
+const TOUCH_HEAVY_HOLD := 0.35
 
 var skills := Skills.new()
 var survival := Survival.new()
@@ -25,16 +31,23 @@ var sneaking := false
 var look_sensitivity_scale := 1.0
 
 var _hour_accumulator := 0.0
+var _attack_cooldown := 0.0
+var _dodge_iframes := 0.0
+var _dodge_cooldown := 0.0
+var _touch_attack_hold := -1.0
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var camera: Camera3D = $CameraPivot/Camera3D
 
 
 func _ready() -> void:
+	super._ready()
 	if not Actions.is_touch():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	Actions.device_changed.connect(_on_device_changed)
-	Actions.action_pressed.connect(_on_touch_action)
+	Actions.action_pressed.connect(_on_touch_action_pressed)
+	Actions.action_released.connect(_on_touch_action_released)
+	posture_broken.connect(func(_actor: CombatActor) -> void: stamina = 0.0)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -48,8 +61,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
 	_process_look(delta)
 	_process_movement(delta)
+	_process_combat(delta)
 	_process_stamina(delta)
 	_process_survival_clock(delta)
 	if Actions.was_pressed("interact"):
@@ -58,7 +73,7 @@ func _physics_process(delta: float) -> void:
 
 func _process_look(_delta: float) -> void:
 	# Mouse-look chega por InputEventMouseMotion; touch-look pelo Actions.
-	# Eixo direito de gamepad entra na Fase 1 como ações look_* dedicadas.
+	# Eixo direito de gamepad entra como ações look_* dedicadas.
 	var touch_delta := Actions.look_delta() * TOUCH_LOOK_SENSITIVITY * look_sensitivity_scale
 	if touch_delta != Vector2.ZERO:
 		_apply_look(touch_delta)
@@ -76,11 +91,11 @@ func _process_movement(delta: float) -> void:
 
 	sneaking = Actions.is_held("sneak")
 	var wants_sprint := Actions.is_held("sprint") and stamina > 1.0 and not sneaking
-	var speed := WALK_SPEED
+	var speed := WALK_SPEED * move_speed_modifier()
 	if sneaking:
 		speed = SNEAK_SPEED
 	elif wants_sprint:
-		speed = SPRINT_SPEED
+		speed = SPRINT_SPEED * move_speed_modifier()
 
 	var input_vec := Actions.move_vector()
 	var direction := (transform.basis * Vector3(input_vec.x, 0, input_vec.y)).normalized()
@@ -102,6 +117,85 @@ func _process_movement(delta: float) -> void:
 		stamina -= 5.0
 
 	move_and_slide()
+
+
+## --- Combate (GDD §8): as mesmas ações nas três entradas -----------------
+
+
+func _process_combat(delta: float) -> void:
+	_attack_cooldown = maxf(0.0, _attack_cooldown - delta)
+	_dodge_iframes = maxf(0.0, _dodge_iframes - delta)
+	_dodge_cooldown = maxf(0.0, _dodge_cooldown - delta)
+	if _touch_attack_hold >= 0.0:
+		_touch_attack_hold += delta
+	# Teclado/gamepad (touch chega pelos sinais do Actions).
+	if Actions.was_pressed("attack_light"):
+		_try_attack(false)
+	elif Actions.was_pressed("attack_heavy"):
+		_try_attack(true)
+	if Actions.was_pressed("parry"):
+		begin_parry()
+	blocking = Actions.is_held("parry") and parry_timer <= 0.0
+	if Actions.was_pressed("dodge"):
+		_dodge()
+
+
+func _try_attack(heavy: bool) -> void:
+	if _attack_cooldown > 0.0:
+		return
+	var cost := weapon.heavy_stamina_cost() if heavy else weapon.stamina_cost
+	if stamina < cost:
+		return
+	stamina -= cost
+	var swing := weapon.swing_time * (1.8 if heavy else 1.0)
+	_attack_cooldown = swing / attack_speed_modifier()
+	var damage := weapon.heavy_damage() if heavy else weapon.damage
+	var posture_hit := weapon.posture_damage * (1.6 if heavy else 1.0)
+	if _sweep_targets(damage, posture_hit):
+		# Só treina batendo em quem revida — anti-grind (GDD §11.1).
+		skills.practice(weapon.skill, 0.4, 0.7)
+
+
+## Varre alvos no arco frontal dentro do alcance da arma.
+func _sweep_targets(damage: float, posture_hit: float) -> bool:
+	var hit_any := false
+	var forward := -transform.basis.z
+	for node in get_tree().get_nodes_in_group("combat_actors"):
+		if node == self or not (node is CombatActor) or not node.is_alive():
+			continue
+		var to_target: Vector3 = node.global_position - global_position
+		to_target.y = 0.0
+		if to_target.length() > weapon.reach + 0.8:
+			continue
+		if forward.dot(to_target.normalized()) < 0.4:
+			continue
+		node.take_hit(self, damage, posture_hit)
+		hit_any = true
+	return hit_any
+
+
+func _dodge() -> void:
+	if stamina < DODGE_COST or _dodge_cooldown > 0.0 or not is_on_floor():
+		return
+	stamina -= DODGE_COST
+	_dodge_iframes = DODGE_IFRAMES
+	_dodge_cooldown = 0.8
+	var input_vec := Actions.move_vector()
+	var burst := transform.basis * Vector3(input_vec.x, 0, input_vec.y)
+	if burst.length() < 0.1:
+		burst = transform.basis.z  # sem direção = recuo
+	velocity += burst.normalized() * 8.0
+
+
+## Esquiva com iframes; aparo/bloqueio treinam Aparo de verdade.
+func take_hit(attacker: CombatActor, damage: float, posture_damage: float, limb := "torso") -> void:
+	if _dodge_iframes > 0.0:
+		return
+	if parry_timer > 0.0:
+		skills.practice("block_parry", 0.6, 0.9)
+	elif blocking:
+		skills.practice("block_parry", 0.25, 0.6)
+	super.take_hit(attacker, damage, posture_damage, limb)
 
 
 func max_stamina() -> float:
@@ -127,7 +221,7 @@ func _process_survival_clock(delta: float) -> void:
 
 
 func current_region() -> String:
-	# Fase 0: uma região de protótipo; o RegionStreamer informará a real.
+	# Fase 1: uma região encenada; o RegionStreamer informará a real.
 	return "pelagem_cinza"
 
 
@@ -138,7 +232,7 @@ func _on_device_changed(device: int) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
-func _on_touch_action(action: String) -> void:
+func _on_touch_action_pressed(action: String) -> void:
 	match action:
 		"interact":
 			interact_requested.emit()
@@ -146,6 +240,23 @@ func _on_touch_action(action: String) -> void:
 			if is_on_floor() and stamina > 5.0:
 				velocity.y = JUMP_VELOCITY
 				stamina -= 5.0
+		"attack_light":
+			_touch_attack_hold = 0.0  # decide leve/forte no soltar
+		"parry":
+			begin_parry()
+			blocking = true
+		"dodge":
+			_dodge()
+
+
+func _on_touch_action_released(action: String) -> void:
+	match action:
+		"attack_light":
+			if _touch_attack_hold >= 0.0:
+				_try_attack(_touch_attack_hold > TOUCH_HEAVY_HOLD)
+				_touch_attack_hold = -1.0
+		"parry":
+			blocking = false
 
 
 func save_data() -> Dictionary:
@@ -154,6 +265,7 @@ func save_data() -> Dictionary:
 		"skills": skills.to_dict(),
 		"survival": survival.to_dict(),
 		"stamina": stamina,
+		"health": health,
 	}
 
 
@@ -164,3 +276,4 @@ func load_data(data: Dictionary) -> void:
 	skills.from_dict(data.get("skills", {}))
 	survival.from_dict(data.get("survival", {}))
 	stamina = data.get("stamina", stamina)
+	health = data.get("health", health)

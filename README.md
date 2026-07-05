@@ -8,7 +8,9 @@ guerreiam por pressões simuladas; eventos emergem da simulação, nunca de scri
 **Leia primeiro:** [`docs/GDD.md`](docs/GDD.md) — o Game Design Document
 completo (lore, regiões, facções, sistemas, pipeline e roadmap).
 
-## Estado atual — Fase 0 (Fundação)
+## Estado atual
+
+**Fase 0 (Fundação) — concluída**
 
 - ✅ Núcleo de simulação headless: relógio/estações, clima sistêmico,
   economia de 3 camadas com caravanas reais, guerra de facções emergente,
@@ -16,9 +18,26 @@ completo (lore, regiões, facções, sistemas, pipeline e roadmap).
 - ✅ Camada de entrada adaptativa: teclado+mouse, gamepad e touch (stick
   virtual dinâmico + botões contextuais) alimentando as mesmas ações semânticas.
 - ✅ HUD responsiva "quase invisível" com breakpoints (phone → ultrawide) e safe-area.
-- ✅ Protótipo cinza jogável com progressão por uso, sobrevivência leve e
-  NPCs encenados a partir da simulação.
 - ✅ Testes headless: unidade + soak (300 dias de mundo sem jogador).
+
+**Fase 1 (Fatia Vertical) — em andamento**
+
+- ✅ Combate v1: ataques leve/forte, bloqueio, aparo com janela, esquiva com
+  iframes, postura e ferimentos localizados — mesmas regras para todos.
+- ✅ Bandidos com IA tática: cercam sem empilhar, pressionam postura quebrada,
+  recuam, chamam reforços com chifre diegético e FOGEM — e a fuga vira
+  rumor real no Registro do Mundo.
+- ✅ Diálogo por conhecimento: NPCs falam do que sabem (memórias, fofocas,
+  notícias que chegam com atraso real). Sem falas oniscientes.
+- ✅ "Teste da taverna": perto de NPCs socializando, o jogador ouve o que
+  eles realmente sabem — sentar na taverna é gameplay.
+- ✅ Ponte simulação→encenação: eventos de conflito do Dramaturgo viram
+  emboscadas físicas; matar um saqueador na frente de testemunhas vira
+  reputação por fofoca.
+- ✅ Descanso na fogueira (o mundo avança de verdade) e morte sem game over
+  (você acorda na praia; o mundo seguiu).
+- ⏳ Próximo: rotinas encenadas dos 40 NPCs com interiores, 5 locais
+  artesanais, percepção/crime completo.
 
 ## Requisitos
 

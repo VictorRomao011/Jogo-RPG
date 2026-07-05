@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://c1banditecos001"]
+
+[ext_resource type="Script" path="res://source/game/combat/bandit.gd" id="1_bandit"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bandit"]
+radius = 0.35
+height = 1.75
+
+[sub_resource type="StandardMaterial3D" id="Material_bandit"]
+albedo_color = Color(0.55, 0.18, 0.16, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_bandit"]
+material = SubResource("Material_bandit")
+radius = 0.35
+height = 1.75
+
+[node name="Bandit" type="CharacterBody3D"]
+script = ExtResource("1_bandit")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, 0)
+shape = SubResource("CapsuleShape3D_bandit")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, 0)
+mesh = SubResource("CapsuleMesh_bandit")

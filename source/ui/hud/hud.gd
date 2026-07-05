@@ -5,21 +5,29 @@ extends CanvasLayer
 ## mundo chegam como rumor discreto, nunca como popup de sistema.
 
 const FADE_DELAY := 1.5
+const DIALOG_SECONDS := 6.0
 
 var _player: Player
 var _fade_timer := 0.0
+var _dialog_timer := 0.0
 
 @onready var stamina_bar: ProgressBar = %StaminaBar
+@onready var health_bar: ProgressBar = %HealthBar
 @onready var rumor_label: Label = %RumorLabel
 @onready var interact_button: Button = %InteractButton
 @onready var action_cluster: Control = %ActionCluster
 @onready var clock_label: Label = %ClockLabel
+@onready var dialog_panel: PanelContainer = %DialogPanel
+@onready var dialog_label: Label = %DialogLabel
 
 
 func _ready() -> void:
+	add_to_group("hud")
 	stamina_bar.modulate.a = 0.0
+	health_bar.visible = false
 	rumor_label.modulate.a = 0.0
 	interact_button.visible = false
+	dialog_panel.visible = false
 	action_cluster.visible = Actions.is_touch()
 	Actions.device_changed.connect(_on_device_changed)
 	Sim.world_event.connect(_on_world_event)
@@ -61,6 +69,27 @@ func _process(delta: float) -> void:
 	rumor_label.modulate.a = maxf(0.0, rumor_label.modulate.a - delta * 0.1)
 	clock_label.text = Sim.world.clock.timestamp()
 	_update_interact_button()
+	_update_health()
+	if _dialog_timer > 0.0:
+		_dialog_timer -= delta
+		if _dialog_timer <= 0.0:
+			dialog_panel.visible = false
+
+
+## Vida só aparece machucado — HUD quase invisível (GDD §14.1).
+func _update_health() -> void:
+	if _player == null:
+		return
+	health_bar.max_value = _player.max_health
+	health_bar.value = _player.health
+	health_bar.visible = _player.health < _player.max_health
+
+
+## Fala diegética: conversa direta ou ouvida na taverna.
+func show_dialog(speaker: String, text: String) -> void:
+	dialog_label.text = "%s — %s" % [speaker, text] if speaker != "" else text
+	dialog_panel.visible = true
+	_dialog_timer = DIALOG_SECONDS
 
 
 func _on_stamina_changed(current: float, maximum: float) -> void:
@@ -115,3 +144,4 @@ func _apply_breakpoint() -> void:
 	root.offset_top = float(margins.position.y)
 	rumor_label.add_theme_font_size_override("font_size", UIScale.font_size(16))
 	clock_label.add_theme_font_size_override("font_size", UIScale.font_size(14))
+	dialog_label.add_theme_font_size_override("font_size", UIScale.font_size(18))
