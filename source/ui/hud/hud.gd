@@ -19,6 +19,7 @@ var _dialog_timer := 0.0
 @onready var clock_label: Label = %ClockLabel
 @onready var dialog_panel: PanelContainer = %DialogPanel
 @onready var dialog_label: Label = %DialogLabel
+@onready var journal_button: Button = %JournalButton
 
 
 func _ready() -> void:
@@ -35,6 +36,8 @@ func _ready() -> void:
 	UIScale.breakpoint_changed.connect(func(_bp: String) -> void: _apply_breakpoint())
 	Config.settings_changed.connect(_apply_breakpoint)
 	interact_button.pressed.connect(func() -> void: Actions.touch_tap("interact"))
+	journal_button.visible = Actions.is_touch()
+	journal_button.pressed.connect(func() -> void: Actions.touch_tap("open_journal"))
 	_wire_action_cluster()
 
 
@@ -135,6 +138,7 @@ func _nearest_interactable() -> Interactable:
 
 func _on_device_changed(_device: int) -> void:
 	action_cluster.visible = Actions.is_touch()
+	journal_button.visible = Actions.is_touch()
 
 
 ## Reposiciona densidade por breakpoint; respeita safe-area (notch).

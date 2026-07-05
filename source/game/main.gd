@@ -17,6 +17,7 @@ var _overhear_timer := 8.0
 @onready var hud: HUD = $HUD
 @onready var trade_screen: TradeScreen = $TradeScreen
 @onready var craft_screen: CraftScreen = $CraftScreen
+@onready var journal_screen: JournalScreen = $JournalScreen
 
 
 func _ready() -> void:
@@ -25,6 +26,10 @@ func _ready() -> void:
 	player.interact_requested.connect(_on_interact_requested)
 	player.died.connect(_on_player_died)
 	Sim.world_event.connect(_on_world_event)
+	Actions.action_pressed.connect(func(action: String) -> void:
+		if action == "open_journal":
+			_toggle_journal()
+	)
 	var saved := Sim.load_game()
 	if not saved.is_empty():
 		player.load_data(saved)
@@ -36,6 +41,19 @@ func _process(delta: float) -> void:
 	if _overhear_timer <= 0.0:
 		_overhear_timer = OVERHEAR_INTERVAL
 		_try_overhear()
+	if Actions.was_pressed("open_journal"):
+		_toggle_journal()
+
+
+## Caderno nas 3 entradas: J / LB / botão touch — a MESMA ação semântica.
+func _toggle_journal() -> void:
+	if journal_screen.visible:
+		journal_screen.close()
+		return
+	for screen in get_tree().get_nodes_in_group("modal_screen"):
+		if screen.visible:
+			return
+	journal_screen.open(player)
 
 
 func _on_interact_requested() -> void:

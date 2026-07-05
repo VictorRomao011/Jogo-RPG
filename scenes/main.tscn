@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://c1mainecos00001"]
+[gd_scene load_steps=23 format=3 uid="uid://c1mainecos00001"]
 
 [ext_resource type="Script" path="res://source/game/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://source/game/player/player.tscn" id="2_player"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://source/ui/screens/pause_menu.tscn" id="8_pause"]
 [ext_resource type="Script" path="res://source/game/world/lootable.gd" id="9_loot"]
 [ext_resource type="Script" path="res://source/game/world/poi.gd" id="10_poi"]
+[ext_resource type="PackedScene" path="res://source/ui/screens/journal_screen.tscn" id="11_journal"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_main"]
 sky_top_color = Color(0.35, 0.46, 0.6, 1)
@@ -222,5 +223,7 @@ mesh = SubResource("BoxMesh_house")
 [node name="TradeScreen" parent="." instance=ExtResource("6_trade")]
 
 [node name="CraftScreen" parent="." instance=ExtResource("7_craft")]
+
+[node name="JournalScreen" parent="." instance=ExtResource("11_journal")]
 
 [node name="PauseMenu" parent="." instance=ExtResource("8_pause")]

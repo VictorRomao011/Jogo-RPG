@@ -280,6 +280,10 @@ func current_region() -> String:
 	return "pelagem_cinza"
 
 
+func current_settlement() -> String:
+	return "bruma_alta"
+
+
 func _on_device_changed(device: int) -> void:
 	if device == Actions.Device.TOUCH:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE

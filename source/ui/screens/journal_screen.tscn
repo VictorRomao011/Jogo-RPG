@@ -1,0 +1,83 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1journalecos01"]
+
+[ext_resource type="Script" path="res://source/ui/screens/journal_screen.gd" id="1_journal"]
+
+[node name="JournalScreen" type="CanvasLayer"]
+layer = 5
+script = ExtResource("1_journal")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -240.0
+offset_right = 340.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "Caderno"
+
+[node name="WeightLabel" type="Label" parent="Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+text = "Peso: 0 / 0"
+
+[node name="Columns" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Left" type="VBoxContainer" parent="Panel/VBox/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemsTitle" type="Label" parent="Panel/VBox/Columns/Left"]
+layout_mode = 2
+text = "Mochila"
+
+[node name="ItemsScroll" type="ScrollContainer" parent="Panel/VBox/Columns/Left"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ItemsRows" type="VBoxContainer" parent="Panel/VBox/Columns/Left/ItemsScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Right" type="VBoxContainer" parent="Panel/VBox/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SkillsTitle" type="Label" parent="Panel/VBox/Columns/Right"]
+layout_mode = 2
+text = "O que você aprendeu fazendo"
+
+[node name="SkillsLabel" type="Label" parent="Panel/VBox/Columns/Right"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 2
+
+[node name="RumorsTitle" type="Label" parent="Panel/VBox/Columns/Right"]
+layout_mode = 2
+text = "Rumores que chegaram até aqui"
+
+[node name="RumorsLabel" type="Label" parent="Panel/VBox/Columns/Right"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+autowrap_mode = 2
+
+[node name="CloseJournal" type="Button" parent="Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fechar"
