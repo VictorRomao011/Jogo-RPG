@@ -8,7 +8,7 @@ radius = 0.22
 height = 0.6
 
 [sub_resource type="SphereShape3D" id="SphereShape_adopt"]
-radius = 1.4
+radius = 1.0
 
 [node name="Dog" type="CharacterBody3D"]
 script = ExtResource("1_dog")

@@ -132,7 +132,7 @@ func _scatter_pines() -> void:
 	cone.bottom_radius = 1.5
 	cone.height = 3.4
 	var spots: Array = []
-	_collect_spots(PINE_COUNT, 0.1, spots)
+	_collect_spots(PINE_COUNT, 0.4, spots)
 	var trunk_transforms: Array = []
 	var trunk_colors: Array = []
 	var cone_transforms: Array = []
@@ -158,7 +158,7 @@ func _scatter_oaks() -> void:
 	crown.radius = 1.7
 	crown.height = 2.8
 	var spots: Array = []
-	_collect_spots(OAK_COUNT, 0.1, spots)
+	_collect_spots(OAK_COUNT, 0.4, spots)
 	var trunk_transforms: Array = []
 	var trunk_colors: Array = []
 	var crown_transforms: Array = []
@@ -199,20 +199,21 @@ func _scatter_rocks() -> void:
 
 func _scatter_grass() -> void:
 	var blade := BoxMesh.new()
-	blade.size = Vector3(0.5, 0.4, 0.06)
+	blade.size = Vector3(0.32, 0.42, 0.035)
 	var transforms: Array = []
 	var colors: Array = []
 	for _i in range(GRASS_COUNT):
 		var x := _rng.randf_range(-AREA, AREA)
 		var z := _rng.randf_range(-AREA, AREA)
 		var h := Terrain.height_at(x, z)
-		if h < 0.0:
+		# Capim só onde há grama de verdade (fora da praia/encostas nuas).
+		if h < 0.35:
 			continue
 		var basis := Basis(Vector3.UP, _rng.randf() * TAU).scaled(
-			Vector3.ONE * _rng.randf_range(0.6, 1.4)
+			Vector3.ONE * _rng.randf_range(0.7, 1.3)
 		)
-		transforms.append(Transform3D(basis, Vector3(x, h + 0.15, z)))
-		colors.append(Color(0.25, 0.4, 0.16).lerp(Color(0.42, 0.5, 0.2), _rng.randf()))
+		transforms.append(Transform3D(basis, Vector3(x, h + 0.16, z)))
+		colors.append(Color(0.34, 0.5, 0.22).lerp(Color(0.5, 0.6, 0.26), _rng.randf()))
 	add_child(_multimesh_sway_node(blade, transforms, colors, 0.14))
 
 

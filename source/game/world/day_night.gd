@@ -45,7 +45,7 @@ func _update_sun(f: float) -> void:
 		-deg_to_rad(maxf(elevation, -0.15) * 80.0 + 5.0), deg_to_rad(35.0), 0.0
 	)
 	var day_strength := clampf(elevation, 0.0, 1.0)
-	_sun.light_energy = (0.08 + 1.15 * day_strength) * _weather_dim
+	_sun.light_energy = (0.14 + 1.1 * day_strength) * _weather_dim
 	# Amanhecer/entardecer alaranjados; noite azulada.
 	if day_strength > 0.25:
 		_sun.light_color = Color(1.0, 0.97, 0.9)
@@ -54,10 +54,15 @@ func _update_sun(f: float) -> void:
 	else:
 		_sun.light_color = Color(0.55, 0.62, 0.85)
 	if _env != null:
-		_env.background_energy_multiplier = (0.16 + 0.9 * day_strength) * _weather_dim
+		_env.background_energy_multiplier = (0.3 + 0.8 * day_strength) * _weather_dim
+		# Piso de luz ambiente: a noite é azulada e LEGÍVEL, nunca breu.
+		_env.ambient_light_energy = 0.35 + 0.55 * day_strength
+		_env.ambient_light_color = Color(0.5, 0.58, 0.75).lerp(
+			Color(0.85, 0.85, 0.8), day_strength
+		)
 	# Lua assume à noite; janelas da vila acendem com o escuro.
 	if _moon != null:
-		_moon.light_energy = 0.28 * (1.0 - day_strength) * _weather_dim
+		_moon.light_energy = 0.5 * (1.0 - day_strength) * _weather_dim
 	var glow := clampf(1.0 - day_strength * 1.8, 0.0, 1.0) * 1.8
 	get_tree().call_group("village", "set_window_glow", glow)
 

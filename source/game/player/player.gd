@@ -367,6 +367,13 @@ func _process_stamina(delta: float) -> void:
 		stamina = minf(stamina + STAMINA_REGEN_PER_SEC * delta, maximum)
 	stamina = minf(stamina, maximum)
 	stamina_changed.emit(stamina, maximum)
+	# Câmera respira: afasta no galope/corrida, aproxima parado.
+	var speed_ratio := clampf(
+		Vector2(velocity.x, velocity.z).length() / SPRINT_SPEED, 0.0, 1.3
+	)
+	spring_arm.spring_length = lerpf(
+		spring_arm.spring_length, 3.4 + speed_ratio * 1.4, 3.0 * delta
+	)
 
 
 ## Converte tempo real em horas de jogo para os ticks de sobrevivência.

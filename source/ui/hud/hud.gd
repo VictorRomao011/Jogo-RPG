@@ -50,7 +50,10 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_apply_breakpoint)
 	interact_button.pressed.connect(func() -> void: Actions.touch_tap("interact"))
 	journal_button.visible = Actions.is_touch()
-	journal_button.pressed.connect(func() -> void: Actions.touch_tap("open_journal"))
+	# Chamada DIRETA (sem cadeia de sinais): o toque nunca se perde.
+	journal_button.pressed.connect(func() -> void:
+		get_tree().call_group("main", "toggle_journal")
+	)
 	# Dica de controles que se dissolve sozinha — aprender em minutos,
 	# sem tutorial (GDD: experiência do usuário).
 	hint_label.visible = not Actions.is_touch()

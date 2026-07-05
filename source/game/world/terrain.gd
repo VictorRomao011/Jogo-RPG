@@ -40,7 +40,7 @@ void fragment() {
 	float slope = 1.0 - clamp(normalize(wnorm).y, 0.0, 1.0);
 	vec3 col = mix(grass, dirt, smoothstep(0.10, 0.22, slope + (patch - 0.5) * 0.08));
 	col = mix(col, rock, smoothstep(0.30, 0.45, slope));
-	col = mix(sand, col, smoothstep(-0.35, 0.75, wpos.y));
+	col = mix(sand, col, smoothstep(-0.4, 0.12, wpos.y));
 	ALBEDO = col;
 	ROUGHNESS = 0.95;
 	SPECULAR = 0.15;

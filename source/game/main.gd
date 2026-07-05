@@ -26,10 +26,6 @@ func _ready() -> void:
 	player.interact_requested.connect(_on_interact_requested)
 	player.died.connect(_on_player_died)
 	Sim.world_event.connect(_on_world_event)
-	Actions.action_pressed.connect(func(action: String) -> void:
-		if action == "open_journal":
-			_toggle_journal()
-	)
 	var saved := Sim.load_game()
 	if not saved.is_empty():
 		player.load_data(saved)
@@ -50,7 +46,11 @@ func _process(delta: float) -> void:
 		_toggle_journal()
 
 
-## Caderno nas 3 entradas: J / LB / botão touch — a MESMA ação semântica.
+## Caderno nas 3 entradas: J / LB / botão touch (chamada direta da HUD).
+func toggle_journal() -> void:
+	_toggle_journal()
+
+
 func _toggle_journal() -> void:
 	if journal_screen.visible:
 		journal_screen.close()

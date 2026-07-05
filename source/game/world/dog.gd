@@ -4,7 +4,7 @@ extends CharacterBody3D
 ## ameaçam seu dono, e adora peixe (alimente interagindo com ele).
 
 const FOLLOW_SPEED := 5.4
-const STOP_DISTANCE := 2.4
+const STOP_DISTANCE := 3.4
 const GUARD_RANGE := 9.0
 const BITE_RANGE := 1.4
 const BITE_COOLDOWN := 1.3
