@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://c1mainecos00001"]
+[gd_scene load_steps=39 format=3 uid="uid://c1mainecos00001"]
 
 [ext_resource type="Script" path="res://source/game/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://source/game/player/player.tscn" id="2_player"]
@@ -16,6 +16,11 @@
 [ext_resource type="Script" path="res://source/game/world/terrain.gd" id="14_terrain"]
 [ext_resource type="Script" path="res://source/game/world/water.gd" id="15_water"]
 [ext_resource type="Script" path="res://source/game/world/village_builder.gd" id="16_village"]
+[ext_resource type="PackedScene" path="res://source/game/world/horse.tscn" id="17_horse"]
+[ext_resource type="PackedScene" path="res://source/game/world/dog.tscn" id="18_dog"]
+[ext_resource type="Script" path="res://source/game/world/weather_fx.gd" id="19_weather"]
+[ext_resource type="Script" path="res://source/game/world/birds.gd" id="20_birds"]
+[ext_resource type="Script" path="res://source/game/world/fishing_spot.gd" id="21_fishing"]
 
 [sub_resource type="PhysicalSkyMaterial" id="SkyMat_main"]
 rayleigh_coefficient = 2.5
@@ -313,6 +318,29 @@ shape = SubResource("BoxShape_chest")
 [node name="Mesh" type="MeshInstance3D" parent="BarrilDeSal"]
 material_override = SubResource("Material_wood")
 mesh = SubResource("BoxMesh_chest")
+
+[node name="Cavalo1" parent="." instance=ExtResource("17_horse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.6, -3)
+
+[node name="Cavalo2" parent="." instance=ExtResource("17_horse")]
+transform = Transform3D(0.8, 0, 0.6, 0, 1, 0, -0.6, 0, 0.8, 19, 0.6, -6)
+
+[node name="Filhote" parent="." instance=ExtResource("18_dog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.4, -12)
+
+[node name="Clima" type="Node3D" parent="."]
+script = ExtResource("19_weather")
+
+[node name="Passaros" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 50)
+script = ExtResource("20_birds")
+
+[node name="PontoDePesca" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 70)
+script = ExtResource("21_fishing")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PontoDePesca"]
+shape = SubResource("SphereShape_fire")
 
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
 

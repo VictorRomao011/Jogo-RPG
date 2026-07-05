@@ -33,6 +33,9 @@ var base_max_stamina := 100.0
 var stamina := 100.0
 var sneaking := false
 var look_sensitivity_scale := 1.0
+## Montaria atual (Horse) — sem tipo para evitar dependência circular.
+var mounted: Node3D = null
+var rig: HumanoidRig
 
 var _hour_accumulator := 0.0
 var _attack_cooldown := 0.0
@@ -53,10 +56,14 @@ func _ready() -> void:
 	var capsule := get_node_or_null("Mesh")
 	if capsule != null:
 		capsule.visible = false
-	add_child(HumanoidRig.make(
+	rig = HumanoidRig.make(
 		Color(0.85, 0.68, 0.55), Color(0.24, 0.34, 0.48),
 		Color(0.26, 0.23, 0.2), Color(0.2, 0.14, 0.1)
-	))
+	)
+	add_child(rig)
+	damaged.connect(func(_a: CombatActor, _amt: float, _limb: String) -> void:
+		rig.play_hit()
+	)
 	if not Actions.is_touch():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	Actions.device_changed.connect(_on_device_changed)
@@ -105,12 +112,92 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	_process_look(delta)
-	_process_movement(delta)
-	_process_combat(delta)
+	if mounted != null:
+		_process_mounted()
+	elif _is_in_water():
+		_process_swim(delta)
+	else:
+		_process_movement(delta)
+		_process_combat(delta)
 	_process_stamina(delta)
 	_process_survival_clock(delta)
 	if Actions.was_pressed("interact"):
 		interact_requested.emit()
+
+
+## --- Montaria ------------------------------------------------------------
+
+
+func set_mounted(horse: Node3D) -> void:
+	mounted = horse
+	velocity = Vector3.ZERO
+	($CollisionShape3D as CollisionShape3D).disabled = true
+
+
+func clear_mounted(at: Vector3) -> void:
+	mounted = null
+	($CollisionShape3D as CollisionShape3D).disabled = false
+	global_position = at
+
+
+func _process_mounted() -> void:
+	velocity = Vector3.ZERO
+	if Actions.was_pressed("jump") and mounted != null:
+		mounted.dismount()
+
+
+## --- Natação e mergulho (GDD §11: nadar treina Natação) -------------------
+
+
+func _is_in_water() -> bool:
+	return global_position.y < Terrain.WATER_LEVEL - 0.15
+
+
+func _process_swim(delta: float) -> void:
+	var input := Actions.move_vector()
+	var direction := transform.basis * Vector3(input.x, 0, input.y)
+	velocity.x = lerpf(velocity.x, direction.x * 3.0, 4.0 * delta)
+	velocity.z = lerpf(velocity.z, direction.z * 3.0, 4.0 * delta)
+	var vertical := (Terrain.WATER_LEVEL - 0.35 - global_position.y) * 2.0  # boia
+	if Actions.is_held("jump"):
+		vertical = 2.2
+	elif Actions.is_held("sneak"):
+		vertical = -2.4  # mergulho
+		skills.practice("breath", 0.03 * delta * 60.0, 0.5)
+	velocity.y = lerpf(velocity.y, vertical, 5.0 * delta)
+	stamina = maxf(0.0, stamina - 2.0 * delta)
+	if stamina <= 0.5:
+		health = maxf(0.0, health - 3.0 * delta)  # afogamento
+		if health <= 0.0:
+			died.emit(self)
+	if direction.length() > 0.1:
+		skills.practice("swimming", 0.04 * delta * 60.0, 0.5)
+	move_and_slide()
+
+
+## --- Escalada (BOTW-lite: chuva torna quase proibitivo) -------------------
+
+
+func _try_climb(delta: float) -> bool:
+	if stamina <= 2.0 or Actions.move_vector().y >= -0.2:
+		return false
+	var from := global_position + Vector3(0, 1.0, 0)
+	var query := PhysicsRayQueryParameters3D.create(
+		from, from - transform.basis.z * 0.75
+	)
+	query.exclude = [get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty() or hit["normal"].y > 0.45:
+		return false
+	var wet: bool = Sim.world.weather.current(current_region()) in ["rain", "storm"]
+	var cost := 8.0 * (2.4 if wet else 1.0)
+	if wet and skills.has_technique("escalada_sob_chuva_leve"):
+		cost = 8.0 * 1.4
+	velocity = Vector3.UP * 2.4 - transform.basis.z * 0.5
+	stamina = maxf(0.0, stamina - cost * delta)
+	skills.practice("climbing", 0.05 * delta * 60.0, 0.5)
+	move_and_slide()
+	return true
 
 
 func _process_look(_delta: float) -> void:
@@ -129,6 +216,8 @@ func _apply_look(delta_look: Vector2) -> void:
 
 
 func _process_movement(delta: float) -> void:
+	if not is_on_floor() and _try_climb(delta):
+		return
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
@@ -191,6 +280,8 @@ func _try_attack(heavy: bool) -> void:
 		return
 	stamina -= cost
 	_apply_aim_assist()
+	if rig != null:
+		rig.play_attack()
 	var swing := weapon.swing_time * (1.8 if heavy else 1.0)
 	_attack_cooldown = swing / attack_speed_modifier()
 	var damage := weapon.heavy_damage() if heavy else weapon.damage
@@ -308,7 +399,9 @@ func _on_touch_action_pressed(action: String) -> void:
 		"interact":
 			interact_requested.emit()
 		"jump":
-			if is_on_floor() and stamina > 5.0:
+			if mounted != null:
+				mounted.dismount()
+			elif is_on_floor() and stamina > 5.0:
 				velocity.y = JUMP_VELOCITY
 				stamina -= 5.0
 		"attack_light":

@@ -110,13 +110,40 @@ func _rebuild_skills() -> void:
 		else "Você ainda é o que era quando acordou na praia."
 
 
-## Rumores que JÁ chegaram até aqui (atraso real de notícia).
+## Rumores que JÁ chegaram até aqui + o mapa de memória (lugares que
+## VOCÊ conheceu, com direção a partir da vila — sem marcador mágico).
 func _rebuild_rumors() -> void:
 	var day := Sim.world.clock.day()
 	var known := Sim.world.director.news_known_at(day, _player.current_settlement(), {})
 	var lines: Array = []
-	for i in range(maxi(0, known.size() - 6), known.size()):
+	for i in range(maxi(0, known.size() - 5), known.size()):
 		var event: Dictionary = known[i]
 		lines.append("• (dia %d) %s" % [event["day"], event["description"]])
-	rumors_label.text = "\n".join(lines) if not lines.is_empty() \
-		else "Nenhum rumor ainda. Sente numa taverna."
+	if lines.is_empty():
+		lines.append("Nenhum rumor ainda. Sente numa taverna.")
+	if not Sim.world.discovered.is_empty():
+		lines.append("")
+		lines.append("Lugares que você conheceu:")
+		for place: Dictionary in Sim.world.discovered:
+			lines.append("• %s — %s da vila" % [
+				place["name"], _direction_text(place["x"], place["z"]),
+			])
+	rumors_label.text = "\n".join(lines)
+
+
+func _direction_text(x: float, z: float) -> String:
+	var dx := x - 0.0
+	var dz := z + 12.0  # centro da vila
+	var vertical := "norte" if dz < -8.0 else ("sul" if dz > 8.0 else "")
+	var horizontal := "leste" if dx > 8.0 else ("oeste" if dx < -8.0 else "")
+	if vertical != "" and horizontal != "":
+		var prefix := "nor" if vertical == "norte" else "su"
+		var suffix := "deste" if horizontal == "leste" else "doeste"
+		if vertical == "norte" and horizontal == "oeste":
+			suffix = "oeste"
+		return "a %s%s" % [prefix, suffix]
+	if vertical != "":
+		return "ao %s" % vertical
+	if horizontal != "":
+		return "a %s" % horizontal
+	return "pertinho"

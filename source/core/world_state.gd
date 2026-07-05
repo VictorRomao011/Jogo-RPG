@@ -9,6 +9,8 @@ signal day_simulated(day: int, events: Array)
 var clock := WorldClock.new()
 var rng := RandomNumberGenerator.new()
 var echoes := EchoTrail.new()
+## Lugares que o JOGADOR conheceu: {name, x, z} — o mapa é memória.
+var discovered: Array = []
 var weather: WeatherSim
 var economy: EconomySim
 var factions: FactionSim
@@ -152,6 +154,7 @@ func to_dict() -> Dictionary:
 		"npcs": npcs.to_dict(),
 		"director": director.to_dict(),
 		"echoes": echoes.to_dict(),
+		"discovered": discovered.duplicate(true),
 	}
 
 
@@ -163,3 +166,4 @@ func from_dict(data: Dictionary) -> void:
 	npcs.from_dict(data.get("npcs", {}))
 	director.from_dict(data.get("director", {}))
 	echoes.from_dict(data.get("echoes", {}))
+	discovered = data.get("discovered", discovered)

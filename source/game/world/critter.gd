@@ -8,6 +8,10 @@ const WANDER_SPEED := 1.3
 const FLEE_SPEED := 5.5
 const FLEE_RANGE := 7.0
 
+## Variantes: corça (padrão) ou coelho (escala pequena, cor clara).
+@export var body_scale := 1.0
+@export var body_color := Color(0.48, 0.36, 0.25)
+
 var _direction := Vector3.ZERO
 var _timer := 0.0
 var _fleeing := false
@@ -18,7 +22,9 @@ func _ready() -> void:
 	var capsule := get_node_or_null("Mesh")
 	if capsule != null:
 		capsule.visible = false
-	add_child(QuadrupedRig.make(Color(0.48, 0.36, 0.25)))
+	var rig := QuadrupedRig.make(body_color)
+	rig.scale = Vector3.ONE * body_scale
+	add_child(rig)
 
 
 func _physics_process(delta: float) -> void:

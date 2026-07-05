@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://c1dogecos000001"]
+
+[ext_resource type="Script" path="res://source/game/world/dog.gd" id="1_dog"]
+[ext_resource type="Script" path="res://source/game/world/interactable.gd" id="2_adopt"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dog"]
+radius = 0.22
+height = 0.6
+
+[sub_resource type="SphereShape3D" id="SphereShape_adopt"]
+radius = 1.4
+
+[node name="Dog" type="CharacterBody3D"]
+script = ExtResource("1_dog")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+shape = SubResource("CapsuleShape3D_dog")
+
+[node name="Adotar" type="Area3D" parent="."]
+script = ExtResource("2_adopt")
+prompt = "Adotar filhote"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Adotar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("SphereShape_adopt")

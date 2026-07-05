@@ -11,6 +11,7 @@ const DECISION_INTERVAL := 0.5
 
 var ai := CombatAI.new()
 var target: CombatActor
+var _rig: HumanoidRig
 
 var _decision: int = CombatAI.Decision.ENGAGE
 var _decision_timer := 0.0
@@ -40,10 +41,14 @@ func _ready() -> void:
 	var capsule := get_node_or_null("Mesh")
 	if capsule != null:
 		capsule.visible = false
-	add_child(HumanoidRig.make(
+	_rig = HumanoidRig.make(
 		Color(0.7, 0.55, 0.42), Color(0.42, 0.16, 0.13),
 		Color(0.22, 0.2, 0.18), Color(0.1, 0.08, 0.06), true
-	))
+	)
+	add_child(_rig)
+	damaged.connect(func(_a: CombatActor, _amt: float, _l: String) -> void:
+		_rig.play_hit()
+	)
 	var tag := Label3D.new()
 	tag.text = "Máscara Rubra"
 	tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
@@ -147,6 +152,8 @@ func _try_attack(distance: float) -> void:
 	if _attack_timer > 0.0 or distance > weapon.reach + 0.3:
 		return
 	_attack_timer = weapon.swing_time * 2.2  # ritmo legível, telegrafado
+	if _rig != null:
+		_rig.play_attack()
 	target.take_hit(self, weapon.damage, weapon.posture_damage)
 
 

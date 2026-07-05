@@ -26,10 +26,16 @@ func _on_body_entered(body: Node3D) -> void:
 	if hud != null:
 		var text := location_name if lore_hint == "" else "%s — %s" % [location_name, lore_hint]
 		hud.show_dialog("", text)
-	# Descoberta vira conhecimento do mundo (bardos podem citar depois).
+	# Descoberta vira conhecimento do mundo (bardos podem citar depois)
+	# e entra no mapa de memória do Caderno.
 	Sim.world.director.record(
 		day, "social", "um forasteiro andou explorando %s" % location_name, "bruma_alta"
 	)
+	Sim.world.discovered.append({
+		"name": location_name,
+		"x": global_position.x,
+		"z": global_position.z,
+	})
 	if is_echo_site and echo_id != "":
 		if Sim.world.echoes.find(echo_id):
 			var whisper := Sim.world.echoes.whisper_for(Sim.world.echoes.count())

@@ -10,8 +10,28 @@ const OAK_COUNT := 45
 const ROCK_COUNT := 45
 const GRASS_COUNT := 2600
 const CRITTER_COUNT := 9
+const RABBIT_COUNT := 7
+const WOLF_COUNT := 3
 const AREA := 100.0
 const CRITTER_SCENE := "res://source/game/world/critter.tscn"
+const WOLF_SCENE := "res://source/game/world/wolf.tscn"
+
+## Vento: a vegetação balança por posição no mundo (fase única por planta).
+const SWAY_SHADER := """
+shader_type spatial;
+render_mode cull_disabled;
+uniform float strength = 0.05;
+void vertex() {
+	float phase = MODEL_MATRIX[3].x * 0.35 + MODEL_MATRIX[3].z * 0.3;
+	float lift = max(VERTEX.y, 0.0);
+	VERTEX.x += sin(TIME * 1.7 + phase) * strength * lift;
+	VERTEX.z += cos(TIME * 1.3 + phase) * strength * 0.6 * lift;
+}
+void fragment() {
+	ALBEDO = COLOR.rgb;
+	ROUGHNESS = 1.0;
+}
+"""
 
 ## Zonas livres: {centro, raio} — vila, spawn, POIs, acampamento.
 const CLEAR_ZONES := [
@@ -58,6 +78,15 @@ func _vertex_color_material() -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
 	material.vertex_color_use_as_albedo = true
 	material.roughness = 1.0
+	return material
+
+
+func _sway_material(strength: float) -> ShaderMaterial:
+	var material := ShaderMaterial.new()
+	var shader := Shader.new()
+	shader.code = SWAY_SHADER
+	material.shader = shader
+	material.set_shader_parameter("strength", strength)
 	return material
 
 
@@ -117,7 +146,7 @@ func _scatter_pines() -> void:
 		cone_transforms.append(Transform3D(basis, pos + Vector3(0, 3.6 * s, 0)))
 		cone_colors.append(green)
 	add_child(_multimesh_node_with_material(trunk, trunk_transforms, trunk_colors))
-	add_child(_multimesh_node_with_material(cone, cone_transforms, cone_colors))
+	add_child(_multimesh_sway_node(cone, cone_transforms, cone_colors, 0.06))
 
 
 func _scatter_oaks() -> void:
@@ -142,7 +171,7 @@ func _scatter_oaks() -> void:
 		crown_transforms.append(Transform3D(basis, pos + Vector3(0, 3.1 * s, 0)))
 		crown_colors.append(Color(0.2, 0.34, 0.14).lerp(Color(0.32, 0.44, 0.18), _rng.randf()))
 	add_child(_multimesh_node_with_material(trunk, trunk_transforms, trunk_colors))
-	add_child(_multimesh_node_with_material(crown, crown_transforms, crown_colors))
+	add_child(_multimesh_sway_node(crown, crown_transforms, crown_colors, 0.05))
 
 
 func _collect_spots(count: int, min_height: float, spots: Array) -> void:
@@ -184,7 +213,7 @@ func _scatter_grass() -> void:
 		)
 		transforms.append(Transform3D(basis, Vector3(x, h + 0.15, z)))
 		colors.append(Color(0.25, 0.4, 0.16).lerp(Color(0.42, 0.5, 0.2), _rng.randf()))
-	add_child(_multimesh_node_with_material(blade, transforms, colors))
+	add_child(_multimesh_sway_node(blade, transforms, colors, 0.14))
 
 
 func _multimesh_node_with_material(
@@ -195,13 +224,36 @@ func _multimesh_node_with_material(
 	return node
 
 
+func _multimesh_sway_node(
+	mesh: Mesh, transforms: Array, colors: Array, strength: float
+) -> MultiMeshInstance3D:
+	var node := _multimesh_node(mesh, transforms, colors)
+	node.material_override = _sway_material(strength)
+	return node
+
+
 func _scatter_critters() -> void:
 	var critter_scene: PackedScene = load(CRITTER_SCENE)
-	if critter_scene == null:
-		return
-	for _i in range(CRITTER_COUNT):
-		var pos := _free_position(0.0)
-		if pos != Vector3.INF:
-			var critter: Critter = critter_scene.instantiate()
-			add_child(critter)
-			critter.position = pos + Vector3(0, 0.6, 0)
+	if critter_scene != null:
+		for _i in range(CRITTER_COUNT):
+			var pos := _free_position(0.0)
+			if pos != Vector3.INF:
+				var critter: Critter = critter_scene.instantiate()
+				add_child(critter)
+				critter.position = pos + Vector3(0, 0.6, 0)
+		for _i in range(RABBIT_COUNT):
+			var pos := _free_position(0.0)
+			if pos != Vector3.INF:
+				var rabbit: Critter = critter_scene.instantiate()
+				rabbit.body_scale = 0.45
+				rabbit.body_color = Color(0.66, 0.62, 0.55)
+				add_child(rabbit)
+				rabbit.position = pos + Vector3(0, 0.4, 0)
+	var wolf_scene: PackedScene = load(WOLF_SCENE)
+	if wolf_scene != null:
+		for _i in range(WOLF_COUNT):
+			var pos := _free_position(0.1)
+			if pos != Vector3.INF:
+				var wolf: Wolf = wolf_scene.instantiate()
+				add_child(wolf)
+				wolf.position = pos + Vector3(0, 0.6, 0)

@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://c1horseecos0001"]
+
+[ext_resource type="Script" path="res://source/game/world/horse.gd" id="1_horse"]
+[ext_resource type="Script" path="res://source/game/world/interactable.gd" id="2_mount"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_horse"]
+radius = 0.55
+height = 1.9
+
+[sub_resource type="SphereShape3D" id="SphereShape_mount"]
+radius = 1.8
+
+[node name="Horse" type="CharacterBody3D"]
+script = ExtResource("1_horse")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+shape = SubResource("CapsuleShape3D_horse")
+
+[node name="Montar" type="Area3D" parent="."]
+script = ExtResource("2_mount")
+prompt = "Montar"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Montar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("SphereShape_mount")

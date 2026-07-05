@@ -1,8 +1,8 @@
 class_name HumanoidRig
 extends Node3D
-## Personagem humanoide procedural: cabeça, tronco, braços e pernas com
-## animação de caminhada (pernas/braços alternados, balanço do corpo).
-## Substitui as cápsulas — cada NPC ganha pele, roupa e cabelo próprios.
+## Personagem humanoide v2: formas arredondadas (nada de cubos) — cabeça
+## esférica com olhos, tronco e membros em cápsulas, mãos e pés, cabelo.
+## Anima caminhada, ataque e reação a dano proceduralmente.
 
 var _left_leg: Node3D
 var _right_leg: Node3D
@@ -10,6 +10,8 @@ var _left_arm: Node3D
 var _right_arm: Node3D
 var _torso: Node3D
 var _phase := 0.0
+var _attack_time := 0.0
+var _hit_time := 0.0
 
 
 static func make(
@@ -19,52 +21,76 @@ static func make(
 	rig._torso = Node3D.new()
 	rig.add_child(rig._torso)
 
-	# Tronco (túnica).
-	rig._torso.add_child(_part(Vector3(0.42, 0.56, 0.26), Vector3(0, 1.12, 0), tunic))
-	# Cabeça + cabelo (ou máscara).
-	rig._torso.add_child(_part(Vector3(0.26, 0.26, 0.26), Vector3(0, 1.56, 0), skin))
+	# Tronco em cápsula (ombros arredondados) + quadril.
+	rig._torso.add_child(_capsule(0.21, 0.62, Vector3(0, 1.14, 0), tunic))
+	rig._torso.add_child(_capsule(0.17, 0.3, Vector3(0, 0.86, 0), pants))
+	# Cabeça esférica com olhos e cabelo (ou máscara).
+	var head := _sphere(0.15, Vector3(0, 1.58, 0), skin)
+	rig._torso.add_child(head)
+	head.add_child(_sphere(0.025, Vector3(-0.055, 0.03, -0.13), Color(0.08, 0.08, 0.1)))
+	head.add_child(_sphere(0.025, Vector3(0.055, 0.03, -0.13), Color(0.08, 0.08, 0.1)))
 	if masked:
-		rig._torso.add_child(
-			_part(Vector3(0.28, 0.12, 0.28), Vector3(0, 1.58, 0), Color(0.55, 0.12, 0.1))
-		)
+		head.add_child(_capsule(0.155, 0.1, Vector3(0, 0.02, -0.02), Color(0.5, 0.1, 0.08)))
 	else:
-		rig._torso.add_child(
-			_part(Vector3(0.28, 0.1, 0.28), Vector3(0, 1.68, 0), hair)
-		)
+		head.add_child(_sphere(0.155, Vector3(0, 0.06, 0.02), hair))
 
-	# Braços pendurados nos ombros (pivô no alto para balançar).
-	rig._left_arm = _limb(Vector3(0.11, 0.55, 0.11), Vector3(-0.28, 1.38, 0), skin)
-	rig._right_arm = _limb(Vector3(0.11, 0.55, 0.11), Vector3(0.28, 1.38, 0), skin)
+	# Braços em cápsulas com mãos; pivô no ombro.
+	rig._left_arm = _limb(0.065, 0.52, Vector3(-0.29, 1.4, 0), skin, tunic)
+	rig._right_arm = _limb(0.065, 0.52, Vector3(0.29, 1.4, 0), skin, tunic)
 	rig._torso.add_child(rig._left_arm)
 	rig._torso.add_child(rig._right_arm)
 
-	# Pernas com pivô no quadril.
-	rig._left_leg = _limb(Vector3(0.14, 0.8, 0.14), Vector3(-0.11, 0.82, 0), pants)
-	rig._right_leg = _limb(Vector3(0.14, 0.8, 0.14), Vector3(0.11, 0.82, 0), pants)
+	# Pernas em cápsulas com pés; pivô no quadril.
+	rig._left_leg = _limb(0.085, 0.78, Vector3(-0.11, 0.8, 0), pants, pants, true)
+	rig._right_leg = _limb(0.085, 0.78, Vector3(0.11, 0.8, 0), pants, pants, true)
 	rig.add_child(rig._left_leg)
 	rig.add_child(rig._right_leg)
 	return rig
 
 
-static func _part(part_size: Vector3, at: Vector3, color: Color) -> MeshInstance3D:
-	var mesh_instance := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = part_size
+static func _material(color: Color) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
-	material.roughness = 0.9
-	box.material = material
-	mesh_instance.mesh = box
+	material.roughness = 0.85
+	return material
+
+
+static func _sphere(radius: float, at: Vector3, color: Color) -> MeshInstance3D:
+	var mesh_instance := MeshInstance3D.new()
+	var sphere := SphereMesh.new()
+	sphere.radius = radius
+	sphere.height = radius * 2.0
+	sphere.material = _material(color)
+	mesh_instance.mesh = sphere
 	mesh_instance.position = at
 	return mesh_instance
 
 
-## Membro com pivô no topo: o nó fica na junta, a malha desce.
-static func _limb(part_size: Vector3, joint: Vector3, color: Color) -> Node3D:
+static func _capsule(radius: float, height: float, at: Vector3, color: Color) -> MeshInstance3D:
+	var mesh_instance := MeshInstance3D.new()
+	var capsule := CapsuleMesh.new()
+	capsule.radius = radius
+	capsule.height = height + radius * 2.0
+	capsule.material = _material(color)
+	mesh_instance.mesh = capsule
+	mesh_instance.position = at
+	return mesh_instance
+
+
+## Membro arredondado com extremidade (mão/pé); pivô na junta.
+static func _limb(
+	radius: float, length: float, joint: Vector3, tip_color: Color,
+	sleeve_color: Color, is_leg := false
+) -> Node3D:
 	var pivot := Node3D.new()
 	pivot.position = joint
-	var mesh := _part(part_size, Vector3(0, -part_size.y * 0.5, 0), color)
-	pivot.add_child(mesh)
+	pivot.add_child(_capsule(radius, length - radius, Vector3(0, -length * 0.5, 0), sleeve_color))
+	if is_leg:
+		var foot := _capsule(radius * 0.9, 0.12, Vector3(0, -length, -0.06), Color(0.2, 0.16, 0.12))
+		foot.rotation.x = PI / 2.0
+		pivot.add_child(foot)
+	else:
+		pivot.add_child(_sphere(radius * 1.15, Vector3(0, -length, 0), tip_color))
 	return pivot
 
 
@@ -86,6 +112,16 @@ static func palette_for(id: String) -> Array:
 	]
 
 
+## Golpe: o braço direito desce num arco rápido.
+func play_attack() -> void:
+	_attack_time = 0.35
+
+
+## Reação a dano: o tronco recua.
+func play_hit() -> void:
+	_hit_time = 0.25
+
+
 func _process(delta: float) -> void:
 	var parent := get_parent()
 	var speed := 0.0
@@ -99,10 +135,22 @@ func _process(delta: float) -> void:
 	_right_leg.rotation.x = -swing
 	_left_arm.rotation.x = -swing * 0.8
 	_right_arm.rotation.x = swing * 0.8
-	# Balanço sutil do corpo ao andar; respiração parado.
+
+	# Ataque sobrepõe o braço direito; reação a dano inclina o tronco.
+	if _attack_time > 0.0:
+		_attack_time -= delta
+		var t := 1.0 - _attack_time / 0.35
+		_right_arm.rotation.x = lerpf(-2.2, 0.7, t)
+	if _hit_time > 0.0:
+		_hit_time -= delta
+		_torso.rotation.x = -_hit_time * 0.9
+	else:
+		_torso.rotation.x = 0.0
+
 	if stride > 0.05:
 		_torso.position.y = absf(sin(_phase * 2.0)) * 0.05 * stride
 	else:
 		_torso.position.y = sin(_phase * 0.5) * 0.012
-		_left_arm.rotation.x = sin(_phase * 0.5) * 0.05
-		_right_arm.rotation.x = -sin(_phase * 0.5) * 0.05
+		if _attack_time <= 0.0:
+			_left_arm.rotation.x = sin(_phase * 0.5) * 0.05
+			_right_arm.rotation.x = -sin(_phase * 0.5) * 0.05
