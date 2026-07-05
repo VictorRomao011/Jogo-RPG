@@ -83,11 +83,28 @@ func _wire_action_cluster() -> void:
 			else:
 				child.button_down.connect(func() -> void: Actions.touch_press(action))
 				child.button_up.connect(func() -> void: Actions.touch_release(action))
+			child.button_down.connect(Audio.click)
 
 
 func bind_player(player: Player) -> void:
 	_player = player
 	player.stamina_changed.connect(_on_stamina_changed)
+	player.damaged.connect(_on_player_damaged)
+
+
+## Flash vermelho nas bordas ao levar dano — feedback imediato.
+func _on_player_damaged(_actor: CombatActor, _amount: float, _limb: String) -> void:
+	var vignette := get_node_or_null("Root/HurtVignette")
+	if vignette == null:
+		vignette = ColorRect.new()
+		vignette.name = "HurtVignette"
+		vignette.color = Color(0.7, 0.05, 0.05, 0.0)
+		vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		vignette.set_anchors_preset(Control.PRESET_FULL_RECT)
+		$Root.add_child(vignette)
+		$Root.move_child(vignette, 0)
+	vignette.color.a = 0.32
+	create_tween().tween_property(vignette, "color:a", 0.0, 0.5)
 
 
 func _process(delta: float) -> void:

@@ -40,6 +40,7 @@ func begin_parry() -> void:
 func take_hit(attacker: CombatActor, damage: float, posture_damage: float, limb := "torso") -> void:
 	last_attacker = attacker
 	if parry_timer > 0.0:
+		Audio.sfx("parry", -6.0)
 		# Aparo perfeito: atacante perde postura, defensor nada.
 		attacker.posture = maxf(0.0, attacker.posture - posture_damage * 2.0)
 		if attacker.posture <= 0.0:
@@ -50,6 +51,7 @@ func take_hit(attacker: CombatActor, damage: float, posture_damage: float, limb 
 		if posture <= 0.0:
 			_break_posture()
 		return
+	Audio.sfx("hit", -8.0)
 	health = maxf(0.0, health - damage)
 	posture = maxf(0.0, posture - posture_damage * 0.5)
 	if damage > max_health * 0.25 and limb != "torso":

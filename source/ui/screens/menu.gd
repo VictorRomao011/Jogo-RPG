@@ -21,6 +21,8 @@ func _ready() -> void:
 	modulate.a = 0.0
 	create_tween().tween_property(self, "modulate:a", 1.0, 0.8)
 	continue_button.visible = FileAccess.file_exists(Sim.SAVE_PATH)
+	for button: Button in [continue_button, new_button, quit_button]:
+		button.pressed.connect(Audio.click)
 	continue_button.pressed.connect(_start)
 	new_button.pressed.connect(_new_game)
 	quit_button.pressed.connect(func() -> void: get_tree().quit())

@@ -38,6 +38,8 @@ var mounted: Node3D = null
 var rig: HumanoidRig
 
 var _hour_accumulator := 0.0
+var _step_timer := 0.0
+var _was_swimming := false
 var _attack_cooldown := 0.0
 var _dodge_iframes := 0.0
 var _dodge_cooldown := 0.0
@@ -63,6 +65,9 @@ func _ready() -> void:
 	add_child(rig)
 	damaged.connect(func(_a: CombatActor, _amt: float, _limb: String) -> void:
 		rig.play_hit()
+	)
+	skills.skill_increased.connect(func(_s: String, _v: float) -> void:
+		Audio.sfx("chime", -10.0, 0.0)
 	)
 	if not Actions.is_touch():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -115,8 +120,12 @@ func _physics_process(delta: float) -> void:
 	if mounted != null:
 		_process_mounted()
 	elif _is_in_water():
+		if not _was_swimming:
+			Audio.sfx("splash", -6.0)
+		_was_swimming = true
 		_process_swim(delta)
 	else:
+		_was_swimming = false
 		_process_movement(delta)
 		_process_combat(delta)
 	_process_stamina(delta)
@@ -249,6 +258,13 @@ func _process_movement(delta: float) -> void:
 		stamina -= 5.0
 
 	move_and_slide()
+	# Passos no ritmo da passada.
+	var ground_speed := Vector2(velocity.x, velocity.z).length()
+	if is_on_floor() and ground_speed > 0.6:
+		_step_timer -= delta * ground_speed
+		if _step_timer <= 0.0:
+			_step_timer = 2.4
+			Audio.sfx("step", -16.0, 0.15)
 
 
 ## --- Combate (GDD §8): as mesmas ações nas três entradas -----------------
@@ -280,6 +296,7 @@ func _try_attack(heavy: bool) -> void:
 		return
 	stamina -= cost
 	_apply_aim_assist()
+	Audio.sfx("swing", -10.0)
 	if rig != null:
 		rig.play_attack()
 	var swing := weapon.swing_time * (1.8 if heavy else 1.0)

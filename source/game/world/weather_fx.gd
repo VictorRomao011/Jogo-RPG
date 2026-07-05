@@ -60,6 +60,7 @@ func _process(delta: float) -> void:
 
 ## Relâmpago: clarão duplo, como o de verdade.
 func _strike() -> void:
+	Audio.sfx("thunder", -4.0, 0.12)
 	var tween := create_tween()
 	tween.tween_property(_flash, "light_energy", 3.2, 0.05)
 	tween.tween_property(_flash, "light_energy", 0.3, 0.08)

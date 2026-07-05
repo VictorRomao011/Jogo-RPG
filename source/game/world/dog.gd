@@ -28,6 +28,7 @@ func _ready() -> void:
 
 
 func _on_interact(by: Node) -> void:
+	Audio.sfx("bark", -8.0)
 	var hud := get_tree().get_first_node_in_group("hud")
 	if owner_player == null and by is Player:
 		owner_player = by
@@ -63,6 +64,7 @@ func _follow_and_guard() -> void:
 		var bite_distance := global_position.distance_to(threat.global_position)
 		if bite_distance < BITE_RANGE and _bite_timer <= 0.0:
 			_bite_timer = BITE_COOLDOWN
+			Audio.sfx("bark", -10.0)
 			threat.take_hit(owner_player, 4.0, 6.0)
 	var to_target := target - global_position
 	to_target.y = 0.0
