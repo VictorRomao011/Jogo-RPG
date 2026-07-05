@@ -5,6 +5,18 @@ extends CharacterBody3D
 ## anda até o trabalho, senta na taverna, dorme — e percebe o jogador.
 
 const WALK_SPEED := 2.2
+const WATCH_LEARN_RANGE := 5.0
+const WATCH_LEARN_SECONDS := 12.0
+
+## Profissões que comerciam ao conversar (usam o mercado local real).
+const MERCHANT_PROFESSIONS := ["smith", "innkeeper", "herbalist", "weaver"]
+## Aprender observando (GDD §9.1): o que cada ofício pode ensinar.
+const PROFESSION_RECIPES := {
+	"smith": ["faca_simples"],
+	"innkeeper": ["ensopado_do_cais"],
+	"herbalist": ["cha_de_raiz_morna", "unguento_limpo"],
+	"weaver": ["capa_de_la"],
+}
 
 ## O registro é a fonte da verdade; o corpo é descartável.
 var record: NPCRecord
@@ -15,6 +27,7 @@ var activity_spots: Dictionary = {}
 var _target := Vector3.ZERO
 var _has_target := false
 var _perception_timer := 0.0
+var _watch_accumulated := 0.0
 
 
 func _ready() -> void:
@@ -48,6 +61,36 @@ func _on_talk(_by: Node) -> void:
 		Sim.world.clock.day(), 1.0, "player"
 	)
 	record.player_opinion = clampf(record.player_opinion + 1.0, -100.0, 100.0)
+	# Artesãos e taverneiros comerciam — com o mercado REAL da vila.
+	if record.profession in MERCHANT_PROFESSIONS and record.player_opinion > -20.0:
+		get_tree().call_group("main", "open_trade", record)
+
+
+## Ver um artesão trabalhando ensina (GDD §9.1): crafting é conhecimento.
+func _teach_by_watching(elapsed: float) -> void:
+	if record == null or current_activity != "work" \
+			or not PROFESSION_RECIPES.has(record.profession):
+		return
+	var player := get_tree().get_first_node_in_group("player")
+	if player == null or not (player is Player):
+		return
+	if global_position.distance_to(player.global_position) > WATCH_LEARN_RANGE:
+		return
+	_watch_accumulated += elapsed
+	if _watch_accumulated < WATCH_LEARN_SECONDS:
+		return
+	_watch_accumulated = 0.0
+	var teachable: Array = PROFESSION_RECIPES[record.profession]
+	for recipe_id: String in teachable:
+		if not player.crafting.known_recipes.has(recipe_id):
+			player.crafting.learn(recipe_id, "observando %s" % record.display_name)
+			var hud := get_tree().get_first_node_in_group("hud")
+			if hud != null:
+				hud.show_dialog(
+					"", "Observando %s trabalhar, você entende como se faz: %s."
+					% [record.display_name, recipe_id]
+				)
+			return
 
 
 func _physics_process(delta: float) -> void:
@@ -59,6 +102,7 @@ func _physics_process(delta: float) -> void:
 	if _perception_timer <= 0.0:
 		_perception_timer = 0.5
 		_perceive()
+		_teach_by_watching(0.5)
 
 
 func _follow_schedule() -> void:

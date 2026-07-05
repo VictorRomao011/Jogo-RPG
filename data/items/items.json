@@ -1,0 +1,22 @@
+{
+  "items": [
+    {"id": "grain", "name": "Grão", "weight": 0.5, "category": "food", "nutrition": 0.15},
+    {"id": "fish", "name": "Peixe", "weight": 0.6, "category": "food", "nutrition": 0.3},
+    {"id": "salt", "name": "Sal", "weight": 0.3, "category": "food"},
+    {"id": "ale", "name": "Cerveja", "weight": 0.8, "category": "food", "nutrition": 0.1},
+    {"id": "iron", "name": "Ferro", "weight": 2.0, "category": "material"},
+    {"id": "vethrite", "name": "Vethrita Morta", "weight": 1.5, "category": "material"},
+    {"id": "tools", "name": "Ferramentas", "weight": 2.5, "category": "manufactured"},
+    {"id": "cloth", "name": "Tecido", "weight": 0.7, "category": "manufactured"},
+    {"id": "leather", "name": "Couro", "weight": 1.0, "category": "material"},
+    {"id": "herbs", "name": "Ervas", "weight": 0.2, "category": "medicine"},
+    {"id": "leeches", "name": "Sanguessugas Medicinais", "weight": 0.3, "category": "medicine"},
+    {"id": "relics", "name": "Relíquias de Voralt", "weight": 1.2, "category": "luxury"},
+    {"id": "faca", "name": "Faca", "weight": 0.8, "category": "weapon"},
+    {"id": "capa_de_la", "name": "Capa de Lã", "weight": 1.8, "category": "clothing", "warmth": 0.35},
+    {"id": "ensopado_do_cais", "name": "Ensopado do Cais", "weight": 0.9, "category": "food", "nutrition": 0.7},
+    {"id": "cha_de_raiz_morna", "name": "Chá de Raiz Morna", "weight": 0.3, "category": "medicine"},
+    {"id": "unguento_limpo", "name": "Unguento Limpo", "weight": 0.3, "category": "medicine"},
+    {"id": "cataplasma_de_sanguessuga", "name": "Cataplasma de Sanguessuga", "weight": 0.4, "category": "medicine"}
+  ]
+}

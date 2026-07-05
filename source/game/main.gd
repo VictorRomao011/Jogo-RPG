@@ -15,6 +15,8 @@ var _overhear_timer := 8.0
 
 @onready var player: Player = $Player
 @onready var hud: HUD = $HUD
+@onready var trade_screen: TradeScreen = $TradeScreen
+@onready var craft_screen: CraftScreen = $CraftScreen
 
 
 func _ready() -> void:
@@ -49,6 +51,20 @@ func _on_interact_requested() -> void:
 		best.interact(player)
 		if best.name == "Fogueira":
 			_rest_at_fire()
+		elif best.name == "Bancada":
+			craft_screen.open(player, "Bancada da Forja", 0.7)
+
+
+## Chamado pelo NPCBody quando um artesão/taverneiro aceita negociar.
+func open_trade(record: NPCRecord) -> void:
+	var market: Market = Sim.world.economy.markets.get(record.location)
+	if market != null:
+		trade_screen.open(market, player, record.display_name)
+
+
+## Chamado pelo menu de pausa antes de sair.
+func save_before_exit() -> void:
+	Sim.save_game(player.save_data())
 
 
 ## Descansar na fogueira: o mundo avança de verdade (não é fade fake).

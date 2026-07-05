@@ -8,6 +8,7 @@ signal day_simulated(day: int, events: Array)
 
 var clock := WorldClock.new()
 var rng := RandomNumberGenerator.new()
+var echoes := EchoTrail.new()
 var weather: WeatherSim
 var economy: EconomySim
 var factions: FactionSim
@@ -150,6 +151,7 @@ func to_dict() -> Dictionary:
 		"factions": factions.to_dict(),
 		"npcs": npcs.to_dict(),
 		"director": director.to_dict(),
+		"echoes": echoes.to_dict(),
 	}
 
 
@@ -160,3 +162,4 @@ func from_dict(data: Dictionary) -> void:
 	factions.from_dict(data.get("factions", {}))
 	npcs.from_dict(data.get("npcs", {}))
 	director.from_dict(data.get("director", {}))
+	echoes.from_dict(data.get("echoes", {}))

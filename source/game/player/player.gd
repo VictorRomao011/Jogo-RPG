@@ -24,6 +24,10 @@ const TOUCH_HEAVY_HOLD := 0.35
 
 var skills := Skills.new()
 var survival := Survival.new()
+var inventory := Inventory.new()
+var crafting := Crafting.new()
+## Catálogo de itens (peso/nutrição) carregado de data/items/items.json.
+var item_catalog: Dictionary = {}
 
 var base_max_stamina := 100.0
 var stamina := 100.0
@@ -48,13 +52,40 @@ func _ready() -> void:
 	Actions.action_pressed.connect(_on_touch_action_pressed)
 	Actions.action_released.connect(_on_touch_action_released)
 	posture_broken.connect(func(_actor: CombatActor) -> void: stamina = 0.0)
+	crafting.load_catalog()
+	_load_item_catalog()
+	Config.settings_changed.connect(_apply_settings)
+	_apply_settings()
+
+
+func _apply_settings() -> void:
+	look_sensitivity_scale = Config.mouse_sensitivity
+
+
+func _load_item_catalog() -> void:
+	var data: Variant = DataLoader.load_json("res://data/items/items.json")
+	if data is Dictionary:
+		for item: Dictionary in data.get("items", []):
+			item_catalog[item["id"]] = item
+
+
+## Comer/usar remédio direto do inventário — 1 gesto, sem menus fundos.
+func consume(item_id: String) -> bool:
+	var meta: Dictionary = item_catalog.get(item_id, {})
+	if meta.get("category", "") == "medicine":
+		if inventory.remove(item_id):
+			return survival.use_remedy(item_id)
+		return false
+	var nutrition: float = meta.get("nutrition", 0.0)
+	if nutrition > 0.0 and inventory.remove(item_id):
+		survival.eat(nutrition)
+		return true
+	return false
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		_apply_look(event.relative * MOUSE_SENSITIVITY * look_sensitivity_scale)
-	elif event.is_action_pressed("ui_menu"):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	elif event is InputEventMouseButton and event.pressed \
 			and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE and not Actions.is_touch():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -147,6 +178,7 @@ func _try_attack(heavy: bool) -> void:
 	if stamina < cost:
 		return
 	stamina -= cost
+	_apply_aim_assist()
 	var swing := weapon.swing_time * (1.8 if heavy else 1.0)
 	_attack_cooldown = swing / attack_speed_modifier()
 	var damage := weapon.heavy_damage() if heavy else weapon.damage
@@ -154,6 +186,29 @@ func _try_attack(heavy: bool) -> void:
 	if _sweep_targets(damage, posture_hit):
 		# Só treina batendo em quem revida — anti-grind (GDD §11.1).
 		skills.practice(weapon.skill, 0.4, 0.7)
+
+
+## Soft-target (GDD §15.4): no touch, gira suavemente para o alvo mais
+## próximo no arco frontal. Mesma mecânica, tuning honesto por dispositivo.
+func _apply_aim_assist() -> void:
+	if not Config.aim_assist or not Actions.is_touch():
+		return
+	var forward := -transform.basis.z
+	var best: CombatActor = null
+	var best_distance := weapon.reach + 1.6
+	for node in get_tree().get_nodes_in_group("combat_actors"):
+		if node == self or not (node is CombatActor) or not node.is_alive():
+			continue
+		var to_target: Vector3 = node.global_position - global_position
+		to_target.y = 0.0
+		var d := to_target.length()
+		if d < best_distance and forward.dot(to_target.normalized()) > 0.1:
+			best_distance = d
+			best = node
+	if best != null:
+		var look_point := best.global_position
+		look_point.y = global_position.y
+		look_at(look_point, Vector3.UP, true)
 
 
 ## Varre alvos no arco frontal dentro do alcance da arma.
@@ -264,6 +319,8 @@ func save_data() -> Dictionary:
 		"position": [global_position.x, global_position.y, global_position.z],
 		"skills": skills.to_dict(),
 		"survival": survival.to_dict(),
+		"inventory": inventory.to_dict(),
+		"crafting": crafting.to_dict(),
 		"stamina": stamina,
 		"health": health,
 	}
@@ -275,5 +332,7 @@ func load_data(data: Dictionary) -> void:
 		global_position = Vector3(pos[0], pos[1], pos[2])
 	skills.from_dict(data.get("skills", {}))
 	survival.from_dict(data.get("survival", {}))
+	inventory.from_dict(data.get("inventory", {}))
+	crafting.from_dict(data.get("crafting", {}))
 	stamina = data.get("stamina", stamina)
 	health = data.get("health", health)

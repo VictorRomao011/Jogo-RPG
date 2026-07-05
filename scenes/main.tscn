@@ -1,10 +1,15 @@
-[gd_scene load_steps=14 format=3 uid="uid://c1mainecos00001"]
+[gd_scene load_steps=22 format=3 uid="uid://c1mainecos00001"]
 
 [ext_resource type="Script" path="res://source/game/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://source/game/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://source/ui/hud/hud.tscn" id="3_hud"]
 [ext_resource type="Script" path="res://source/game/world/region_streamer.gd" id="4_streamer"]
 [ext_resource type="Script" path="res://source/game/world/interactable.gd" id="5_interact"]
+[ext_resource type="PackedScene" path="res://source/ui/screens/trade_screen.tscn" id="6_trade"]
+[ext_resource type="PackedScene" path="res://source/ui/screens/craft_screen.tscn" id="7_craft"]
+[ext_resource type="PackedScene" path="res://source/ui/screens/pause_menu.tscn" id="8_pause"]
+[ext_resource type="Script" path="res://source/game/world/lootable.gd" id="9_loot"]
+[ext_resource type="Script" path="res://source/game/world/poi.gd" id="10_poi"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_main"]
 sky_top_color = Color(0.35, 0.46, 0.6, 1)
@@ -33,6 +38,15 @@ size = Vector3(6, 4, 6)
 
 [sub_resource type="BoxMesh" id="BoxMesh_house"]
 size = Vector3(6, 4, 6)
+
+[sub_resource type="SphereShape3D" id="SphereShape_poi"]
+radius = 8.0
+
+[sub_resource type="BoxShape3D" id="BoxShape_chest"]
+size = Vector3(1, 0.8, 0.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_chest"]
+size = Vector3(1, 0.8, 0.8)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -117,4 +131,96 @@ prompt = "Descansar"
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Fogueira"]
 shape = SubResource("SphereShape_fire")
 
+[node name="Bancada" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -11)
+script = ExtResource("5_interact")
+prompt = "Usar bancada"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Bancada"]
+shape = SubResource("SphereShape_fire")
+
+[node name="BauDaMira" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.4, -12)
+script = ExtResource("9_loot")
+item_id = "iron"
+quantity = 2
+owner_npc_id = "mira_ferreira"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BauDaMira"]
+shape = SubResource("BoxShape_chest")
+
+[node name="Mesh" type="MeshInstance3D" parent="BauDaMira"]
+mesh = SubResource("BoxMesh_chest")
+
+[node name="PortoAfundado" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 62)
+script = ExtResource("10_poi")
+location_name = "O Porto Afundado"
+lore_hint = "mastros apodrecidos apontam para fora da maré, todos na mesma direção — como se o mar tivesse parado no meio de um gesto."
+is_echo_site = true
+echo_id = "eco_porto"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PortoAfundado"]
+shape = SubResource("SphereShape_poi")
+
+[node name="Mastro1" type="StaticBody3D" parent="PortoAfundado"]
+transform = Transform3D(0.15, 0.08, 0, -0.08, 0.9, 0, 0, 0, 0.15, -3, 2, 2)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PortoAfundado/Mastro1"]
+shape = SubResource("BoxShape_house")
+
+[node name="Mesh" type="MeshInstance3D" parent="PortoAfundado/Mastro1"]
+mesh = SubResource("BoxMesh_house")
+
+[node name="Mastro2" type="StaticBody3D" parent="PortoAfundado"]
+transform = Transform3D(0.15, 0.1, 0, -0.1, 0.8, 0, 0, 0, 0.15, 4, 1.6, -3)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PortoAfundado/Mastro2"]
+shape = SubResource("BoxShape_house")
+
+[node name="Mesh" type="MeshInstance3D" parent="PortoAfundado/Mastro2"]
+mesh = SubResource("BoxMesh_house")
+
+[node name="CarvalhoPartido" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52, 0, 12)
+script = ExtResource("10_poi")
+location_name = "O Carvalho Partido"
+lore_hint = "a árvore foi rachada ao meio há muito tempo; alguém pendura sinos de estanho nos galhos vivos. Nenhum toca."
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CarvalhoPartido"]
+shape = SubResource("SphereShape_poi")
+
+[node name="Tronco" type="StaticBody3D" parent="CarvalhoPartido"]
+transform = Transform3D(0.4, 0, 0, 0, 1.6, 0, 0, 0, 0.4, 0, 3.2, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CarvalhoPartido/Tronco"]
+shape = SubResource("BoxShape_house")
+
+[node name="Mesh" type="MeshInstance3D" parent="CarvalhoPartido/Tronco"]
+mesh = SubResource("BoxMesh_house")
+
+[node name="VigiaCega" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 0, -42)
+script = ExtResource("10_poi")
+location_name = "A Vigia Cega"
+lore_hint = "uma torre de vigia sem janelas. Quem constrói uma torre de vigia sem janelas?"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VigiaCega"]
+shape = SubResource("SphereShape_poi")
+
+[node name="Torre" type="StaticBody3D" parent="VigiaCega"]
+transform = Transform3D(0.6, 0, 0, 0, 3, 0, 0, 0, 0.6, 0, 6, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VigiaCega/Torre"]
+shape = SubResource("BoxShape_house")
+
+[node name="Mesh" type="MeshInstance3D" parent="VigiaCega/Torre"]
+mesh = SubResource("BoxMesh_house")
+
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
+
+[node name="TradeScreen" parent="." instance=ExtResource("6_trade")]
+
+[node name="CraftScreen" parent="." instance=ExtResource("7_craft")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("8_pause")]

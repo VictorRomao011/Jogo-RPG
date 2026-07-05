@@ -1,0 +1,74 @@
+{
+  "locations": [
+    {
+      "id": "porto_afundado",
+      "name": "O Porto Afundado",
+      "region": "pelagem_cinza",
+      "hint": "mastros apodrecidos apontam para fora da maré, todos na mesma direção — como se o mar tivesse parado no meio de um gesto",
+      "echo_site": true,
+      "echo_id": "eco_porto"
+    },
+    {
+      "id": "carvalho_partido",
+      "name": "O Carvalho Partido",
+      "region": "pelagem_cinza",
+      "hint": "a árvore foi rachada ao meio há muito tempo; alguém pendura sinos de estanho nos galhos vivos. Nenhum toca",
+      "echo_site": false
+    },
+    {
+      "id": "vigia_cega",
+      "name": "A Vigia Cega",
+      "region": "pelagem_cinza",
+      "hint": "uma torre de vigia sem janelas. Quem constrói uma torre de vigia sem janelas?",
+      "echo_site": false
+    },
+    {
+      "id": "sino_submerso",
+      "name": "O Sino Submerso",
+      "region": "pelagem_cinza",
+      "hint": "dizem que ele vibra uma vez por noite. Só quem dorme no porto ouve",
+      "echo_site": true,
+      "echo_id": "eco_sino_oeste"
+    },
+    {
+      "id": "degrau_de_voralt",
+      "name": "O Degrau de Voralt",
+      "region": "voralt",
+      "hint": "a perna de pedra parou a meio passo. Embaixo dela, uma feira inteira ficou na sombra para sempre",
+      "echo_site": true,
+      "echo_id": "eco_voralt"
+    },
+    {
+      "id": "clareira_vitrificada",
+      "name": "A Clareira Vitrificada",
+      "region": "bosque_de_vidro",
+      "hint": "as árvores viraram vidro no meio de uma rajada de vento. O vento ainda está lá dentro",
+      "echo_site": true,
+      "echo_id": "eco_bosque"
+    },
+    {
+      "id": "garganta_muda",
+      "name": "A Garganta Muda",
+      "region": "serra_do_bordao",
+      "hint": "o desfiladeiro não devolve eco. Os mineiros jogam pedras e contam os segundos que nunca chegam",
+      "echo_site": true,
+      "echo_id": "eco_serra"
+    },
+    {
+      "id": "vau_dos_afogados",
+      "name": "O Vau dos Afogados",
+      "region": "lamacal_de_ferro",
+      "hint": "na água enferrujada, fileiras de lanças ainda apontam para a margem que nunca alcançaram",
+      "echo_site": true,
+      "echo_id": "eco_lamacal"
+    },
+    {
+      "id": "circulo_de_sal",
+      "name": "O Círculo de Sal",
+      "region": "estepe_khevra",
+      "hint": "os khevri contornam este círculo há gerações. Não por medo, dizem. Por respeito. Ninguém explica a diferença",
+      "echo_site": true,
+      "echo_id": "eco_estepe"
+    }
+  ]
+}
