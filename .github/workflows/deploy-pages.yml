@@ -2,7 +2,7 @@ name: Deploy Web (GitHub Pages)
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, "claude/fable-5-open-world-design-kuivih"]
   workflow_dispatch:
 
 permissions:
