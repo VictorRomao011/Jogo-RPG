@@ -53,20 +53,21 @@ func _diagonal_inches(size: Vector2) -> float:
 	return size.length() / dpi
 
 
-## Tamanho de fonte seguro: escala com a tela, nunca abaixo do legível.
+## Tamanho de fonte seguro: escala com a tela e com a preferência do
+## jogador (Config.font_scale), nunca abaixo do legível.
 func font_size(base: int) -> int:
 	var dpi := maxf(float(DisplayServer.screen_get_dpi()), 96.0)
 	var min_px := int(MIN_FONT_PT * dpi / 72.0)
-	var scale_factor := 1.0
+	var scale_factor: float = Config.font_scale
 	match current:
 		Breakpoint.PHONE_SMALL:
-			scale_factor = 1.25
+			scale_factor *= 1.25
 		Breakpoint.PHONE_LARGE:
-			scale_factor = 1.15
+			scale_factor *= 1.15
 		Breakpoint.TABLET:
-			scale_factor = 1.1
+			scale_factor *= 1.1
 		Breakpoint.ULTRAWIDE:
-			scale_factor = 1.05
+			scale_factor *= 1.05
 	return maxi(int(base * scale_factor), min_px if OS.get_name() == "Android" else base)
 
 

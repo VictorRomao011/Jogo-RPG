@@ -16,6 +16,9 @@ func _init() -> void:
 	_test_combat_actor()
 	_test_combat_ai()
 	_test_dialogue()
+	_test_inventory()
+	_test_crafting_by_knowledge()
+	_test_echo_trail()
 	print("---")
 	print("%d testes ok, %d falhas" % [_passed, _failures.size()])
 	for failure in _failures:
@@ -196,3 +199,49 @@ func _test_dialogue() -> void:
 		Dialogue.line_for(stranger, 9, news).contains("houve luta"),
 		"notícia de fora chega depois do atraso"
 	)
+
+
+func _test_inventory() -> void:
+	var inv := Inventory.new()
+	inv.add("iron", 3)
+	_check(inv.count("iron") == 3, "inventário adiciona")
+	_check(not inv.remove("iron", 5), "não remove o que não tem")
+	_check(inv.remove("iron", 2) and inv.count("iron") == 1, "remove parcial")
+	var catalog := {"iron": {"weight": 2.0}}
+	_check(absf(inv.total_weight(catalog) - 2.0) < 0.001, "peso vem do catálogo")
+	inv.add("iron", 30)
+	_check(inv.is_overloaded(catalog), "sobrecarga com 62kg de ferro")
+
+
+func _test_crafting_by_knowledge() -> void:
+	var crafting := Crafting.new()
+	crafting.load_catalog()
+	var inventory := {"iron": 2, "leather": 1}
+	_check(
+		crafting.craft("faca_simples", inventory, 50.0, 0.7) == 0.0,
+		"não fabrica o que não aprendeu"
+	)
+	crafting.learn("faca_simples", "observando Mira")
+	var quality := crafting.craft("faca_simples", inventory, 50.0, 0.7)
+	_check(quality > 0.0, "fabrica depois de aprender")
+	_check(inventory.get("iron", 0) == 1, "consome material de verdade")
+	_check(inventory.get("faca", 0) == 1, "produz o item")
+	var poor := Crafting.new()
+	poor.load_catalog()
+	poor.learn("faca_simples", "teste")
+	var poor_inventory := {"iron": 1, "leather": 1}
+	var poor_quality := poor.craft("faca_simples", poor_inventory, 5.0, 0.2)
+	_check(poor_quality < quality, "habilidade e estação pesam na qualidade")
+
+
+func _test_echo_trail() -> void:
+	var trail := EchoTrail.new()
+	_check(trail.find("eco_porto"), "primeira ressonância conta")
+	_check(not trail.find("eco_porto"), "ressonância repetida não conta")
+	for echo_id in ["a", "b", "c", "d", "e", "f"]:
+		trail.find(echo_id)
+	_check(trail.completed, "7 ressonâncias completam o fio")
+	_check(trail.whisper_for(7) != "", "a conclusão sussurra algo")
+	var roundtrip := EchoTrail.new()
+	roundtrip.from_dict(trail.to_dict())
+	_check(roundtrip.count() == 7 and roundtrip.completed, "fio sobrevive ao save")

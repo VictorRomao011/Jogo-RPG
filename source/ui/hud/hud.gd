@@ -33,6 +33,7 @@ func _ready() -> void:
 	Sim.world_event.connect(_on_world_event)
 	_apply_breakpoint()
 	UIScale.breakpoint_changed.connect(func(_bp: String) -> void: _apply_breakpoint())
+	Config.settings_changed.connect(_apply_breakpoint)
 	interact_button.pressed.connect(func() -> void: Actions.touch_tap("interact"))
 	_wire_action_cluster()
 
@@ -145,3 +146,12 @@ func _apply_breakpoint() -> void:
 	rumor_label.add_theme_font_size_override("font_size", UIScale.font_size(16))
 	clock_label.add_theme_font_size_override("font_size", UIScale.font_size(14))
 	dialog_label.add_theme_font_size_override("font_size", UIScale.font_size(18))
+	# Alto contraste (GDD §14.4): contorno forte em todo texto da HUD.
+	var outline := 8 if Config.high_contrast else 0
+	for label: Label in [rumor_label, clock_label, dialog_label]:
+		label.add_theme_constant_override("outline_size", outline)
+		label.add_theme_color_override("font_outline_color", Color.BLACK)
+		if Config.high_contrast:
+			label.add_theme_color_override("font_color", Color(1.0, 1.0, 0.85))
+		else:
+			label.remove_theme_color_override("font_color")

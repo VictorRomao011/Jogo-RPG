@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+env:
+  GODOT_VERSION: "4.4.1"
+
+jobs:
+  lint:
+    name: GDScript lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar gdtoolkit
+        run: pip install "gdtoolkit==4.*"
+      - name: gdparse (sintaxe)
+        run: find . -name "*.gd" -not -path "./.git/*" | xargs gdparse
+      - name: gdlint (estilo)
+        run: find . -name "*.gd" -not -path "./.git/*" | xargs gdlint
+
+  data:
+    name: Validar dados declarativos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JSONs de data/ são válidos
+        run: |
+          for f in $(find data -name "*.json"); do
+            python3 -c "import json; json.load(open('$f'))" || exit 1
+            echo "OK $f"
+          done
+
+  tests:
+    name: Testes headless (unidade + soak)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar Godot ${{ env.GODOT_VERSION }}
+        run: |
+          curl -sSL -o godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot
+          chmod +x godot
+      - name: Importar recursos
+        run: ./godot --headless --path . --import || true
+      - name: Testes de unidade
+        run: ./godot --headless --path . --script tests/unit_tests.gd
+      - name: Soak — 120 dias de mundo sem jogador
+        run: ./godot --headless --path . --script tests/soak_test.gd -- 120

@@ -20,7 +20,7 @@ completo (lore, regiões, facções, sistemas, pipeline e roadmap).
 - ✅ HUD responsiva "quase invisível" com breakpoints (phone → ultrawide) e safe-area.
 - ✅ Testes headless: unidade + soak (300 dias de mundo sem jogador).
 
-**Fase 1 (Fatia Vertical) — em andamento**
+**Fase 1 (Fatia Vertical) — concluída**
 
 - ✅ Combate v1: ataques leve/forte, bloqueio, aparo com janela, esquiva com
   iframes, postura e ferimentos localizados — mesmas regras para todos.
@@ -31,13 +31,42 @@ completo (lore, regiões, facções, sistemas, pipeline e roadmap).
   notícias que chegam com atraso real). Sem falas oniscientes.
 - ✅ "Teste da taverna": perto de NPCs socializando, o jogador ouve o que
   eles realmente sabem — sentar na taverna é gameplay.
-- ✅ Ponte simulação→encenação: eventos de conflito do Dramaturgo viram
-  emboscadas físicas; matar um saqueador na frente de testemunhas vira
-  reputação por fofoca.
-- ✅ Descanso na fogueira (o mundo avança de verdade) e morte sem game over
-  (você acorda na praia; o mundo seguiu).
-- ⏳ Próximo: rotinas encenadas dos 40 NPCs com interiores, 5 locais
-  artesanais, percepção/crime completo.
+- ✅ Ponte simulação→encenação: eventos de conflito viram emboscadas físicas;
+  matar um saqueador com testemunhas vira reputação por fofoca.
+- ✅ Descanso na fogueira (o mundo avança de verdade) e morte sem game over.
+
+**Fase 2 (Sistemas Profundos) — concluída**
+
+- ✅ Inventário real (peso por catálogo) + comércio com o mercado SIMULADO:
+  os preços são os da vila, cada compra/venda move estoque e preço, e
+  negociar treina Comércio. Arbitragem entre vilas é uma carreira.
+- ✅ Crime/testemunho: furto sem testemunha não existe; percepção real
+  (distância × clima × furtividade); testemunhas decidem por personalidade
+  (denunciam, chantageiam ou "não viram nada").
+- ✅ Crafting por conhecimento encenado: observar a ferreira trabalhar
+  ensina a receita; a bancada fabrica consumindo o inventário de verdade;
+  qualidade = material × habilidade × estação.
+
+**Fase 3 (Conteúdo) — estrutura pronta**
+
+- ✅ O fio do Eco: 7 ressonâncias no mundo (data/locations), sem marcador,
+  com sussurros diegéticos progressivos — a "história principal que quase
+  desaparece" (2 sítios já na cena protótipo).
+- ✅ POIs artesanais com 3 camadas de leitura (Porto Afundado, Carvalho
+  Partido, Vigia Cega na cena; 9 locais definidos em dados para as regiões).
+- ⏳ Produção de conteúdo em escala (8 regiões encenadas, ~140 locais,
+  450 NPCs) é trabalho de equipe de arte/level design — a arquitetura,
+  os dados e os sistemas já suportam tudo.
+
+**Fase 4 (Polimento & Multiplataforma) — concluída no escopo do protótipo**
+
+- ✅ Menu principal, pausa (congela a encenação, preserva o mundo) e
+  configurações persistidas: sensibilidade, tamanho de texto, alto
+  contraste, assistência de mira (touch) e teto de FPS (bateria).
+- ✅ Acessibilidade dia um: fonte mínima legível por DPI, alto contraste
+  com contorno, aim assist honesto por dispositivo.
+- ✅ CI no GitHub Actions: lint + validação de dados + testes de unidade +
+  soak de 120 dias a cada push.
 
 ## Requisitos
 

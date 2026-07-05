@@ -35,6 +35,14 @@ func _on_day_simulated(_day: int, events: Array) -> void:
 		world_event.emit(event)
 
 
+## Novo jogo: mundo zerado do seed (o autoload sobrevive à troca de cena,
+## então o reset precisa ser explícito).
+func reset_world() -> void:
+	world = WorldState.new()
+	world.initialize()
+	world.day_simulated.connect(_on_day_simulated)
+
+
 ## Dormir/viajar aceleram o mundo de verdade (não é fade-out fake).
 func skip_hours(hours: int) -> void:
 	for _i in range(hours):
