@@ -16,6 +16,8 @@ func _ready() -> void:
 	continue_button.pressed.connect(_start)
 	new_button.pressed.connect(_new_game)
 	quit_button.pressed.connect(func() -> void: get_tree().quit())
+	# No navegador, "Sair" não faz sentido — a aba é o sair.
+	quit_button.visible = OS.get_name() != "Web"
 	version_label.text = "Ecos de Vaethir — protótipo %s" % \
 		ProjectSettings.get_setting("application/config/version", "0.0.0")
 	if continue_button.visible:

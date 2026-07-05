@@ -20,6 +20,7 @@ func _ready() -> void:
 	resume_button.pressed.connect(close)
 	menu_button.pressed.connect(_to_main_menu)
 	quit_button.pressed.connect(_quit)
+	quit_button.visible = OS.get_name() != "Web"
 	sensitivity_slider.min_value = 0.3
 	sensitivity_slider.max_value = 2.5
 	sensitivity_slider.step = 0.1

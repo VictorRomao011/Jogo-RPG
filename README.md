@@ -68,6 +68,20 @@ completo (lore, regiões, facções, sistemas, pipeline e roadmap).
 - ✅ CI no GitHub Actions: lint + validação de dados + testes de unidade +
   soak de 120 dias a cada push.
 
+## 🎮 Jogar no navegador (GitHub Pages)
+
+O jogo tem build Web automática. Para ativar o link:
+
+1. No GitHub, vá em **Settings → Pages** e em *Build and deployment* escolha
+   **Source: GitHub Actions**.
+2. Faça o merge desta branch na `main` (ou rode o workflow
+   **Deploy Web (GitHub Pages)** manualmente na aba *Actions*).
+3. Ao final do workflow, o jogo fica no ar em:
+   **https://victorromao011.github.io/Jogo-RPG/**
+
+Funciona no desktop (teclado+mouse) e no celular (controles touch aparecem
+sozinhos). O save fica no armazenamento do navegador.
+
 ## Requisitos
 
 - [Godot 4.4+](https://godotengine.org/download) (edição padrão, GDScript)
