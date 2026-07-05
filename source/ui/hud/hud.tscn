@@ -1,0 +1,149 @@
+[gd_scene load_steps=3 format=3 uid="uid://c1hudecos000001"]
+
+[ext_resource type="Script" path="res://source/ui/hud/hud.gd" id="1_hud"]
+[ext_resource type="Script" path="res://source/ui/hud/touch_controls.gd" id="2_touch"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_hud")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TouchControls" type="Control" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("2_touch")
+
+[node name="StickBase" type="Panel" parent="Root/TouchControls"]
+layout_mode = 0
+offset_right = 180.0
+offset_bottom = 180.0
+mouse_filter = 2
+
+[node name="StickKnob" type="Panel" parent="Root/TouchControls/StickBase"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 60.0
+offset_right = 120.0
+offset_bottom = 120.0
+mouse_filter = 2
+
+[node name="StaminaBar" type="ProgressBar" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -48.0
+offset_right = 150.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+show_percentage = false
+
+[node name="RumorLabel" type="Label" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -320.0
+offset_top = 18.0
+offset_right = 320.0
+offset_bottom = 46.0
+grow_horizontal = 2
+mouse_filter = 2
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ClockLabel" type="Label" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -340.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = 36.0
+grow_horizontal = 0
+mouse_filter = 2
+horizontal_alignment = 2
+
+[node name="InteractButton" type="Button" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -110.0
+offset_right = -40.0
+offset_bottom = -54.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "Interagir"
+
+[node name="ActionCluster" type="Control" parent="Root"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -240.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="attack_light" type="Button" parent="Root/ActionCluster"]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 90.0
+offset_right = 220.0
+offset_bottom = 170.0
+text = "Atacar"
+
+[node name="dodge" type="Button" parent="Root/ActionCluster"]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 140.0
+offset_right = 130.0
+offset_bottom = 220.0
+text = "Esquiva"
+
+[node name="jump" type="Button" parent="Root/ActionCluster"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 0.0
+offset_right = 230.0
+offset_bottom = 80.0
+text = "Pular"
+
+[node name="sneak" type="Button" parent="Root/ActionCluster"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 120.0
+offset_bottom = 120.0
+toggle_mode = true
+text = "Agachar"

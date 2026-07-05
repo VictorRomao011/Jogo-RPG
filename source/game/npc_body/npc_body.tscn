@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://c1npcbodyecos01"]
+
+[ext_resource type="Script" path="res://source/game/npc_body/npc_body.gd" id="1_npc"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_npc"]
+radius = 0.35
+height = 1.7
+
+[sub_resource type="StandardMaterial3D" id="Material_npc"]
+albedo_color = Color(0.65, 0.55, 0.4, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_npc"]
+material = SubResource("Material_npc")
+radius = 0.35
+height = 1.7
+
+[node name="NPCBody" type="CharacterBody3D"]
+script = ExtResource("1_npc")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+shape = SubResource("CapsuleShape3D_npc")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("CapsuleMesh_npc")
